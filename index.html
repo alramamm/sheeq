@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sheeq — Style Battle App</title>
+  <style>
+    :root {
+      --primary:       #7B5EA7;
+      --primary-light: #EDE9F5;
+      --bg:            #F8F7F9;
+      --bg-elevated:   #FFFFFF;
+      --bg-subtle:     #F0EFF4;
+      --text-primary:  #1A1820;
+      --text-secondary:#8A8696;
+      --border:        #E8E6EE;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Arabic', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(155deg, #130A24 0%, #0D0618 55%, #1A0D30 100%);
+      padding: 64px 24px 56px;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .app-icon {
+      width: 108px;
+      height: 108px;
+      border-radius: 26px;
+      margin-bottom: 22px;
+      box-shadow: 0 0 0 1px rgba(192,162,255,0.22), 0 16px 56px rgba(100,60,200,0.55);
+    }
+    .app-name {
+      font-size: 36px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+    .app-tagline {
+      font-size: 16px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 500;
+      margin-bottom: 40px;
+      max-width: 320px;
+    }
+
+    /* ── LINKS ── */
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .link-btn {
+      display: block;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      transition: background 0.18s, border-color 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .link-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .link-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .link-text { flex: 1; text-align: left; }
+    .link-arrow { color: rgba(255,255,255,0.3); font-size: 13px; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      background: var(--bg-elevated);
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="app-icon" src="./icon.png" alt="Sheeq" />
+  <div class="app-name">Sheeq</div>
+  <div class="app-tagline">Style Battle — Vote, Compete, Rise</div>
+
+  <div class="links">
+    <a class="link-btn" href="./privacy-policy.html">
+      <span class="link-icon">🔒</span>
+      <span class="link-text">Privacy Policy / سياسة الخصوصية</span>
+      <span class="link-arrow">›</span>
+    </a>
+    <a class="link-btn" href="./terms-of-service.html">
+      <span class="link-icon">📄</span>
+      <span class="link-text">Terms of Service / شروط الاستخدام</span>
+      <span class="link-arrow">›</span>
+    </a>
+    <a class="link-btn" href="./child-safety.html">
+      <span class="link-icon">🛡️</span>
+      <span class="link-text">Child Safety / معايير سلامة الأطفال</span>
+      <span class="link-arrow">›</span>
+    </a>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 Sheeq · <a href="mailto:support@sheeq.app" style="color: var(--primary); text-decoration: none;">support@sheeq.app</a>
+</footer>
+
+</body>
+</html>
