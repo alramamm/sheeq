@@ -244,7 +244,7 @@
   <img class="hero-icon" src="./icon.png" alt="Sheeq" />
   <div class="hero-name" id="hero-name">Sheeq</div>
   <div class="hero-page-title" id="hero-page-title">Privacy Policy</div>
-  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: July 25, 2026</div>
+  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: August 9, 2026</div>
 </div>
 
 <!-- ── LANG BAR ──────────────────────────────────────── -->
@@ -319,9 +319,11 @@
           <tr><td>Behavioral profiling (internal only — personalizes your in-app experience)</td><td>In-app interactions: votes, uploads, engagement patterns</td><td>Legitimate interest (personalization)</td></tr>
           <tr><td>Admin analytics (aggregate usage stats, city distribution)</td><td>IP-derived city, usage data</td><td>Legitimate interest (service improvement)</td></tr>
           <tr><td>Legal compliance, fraud prevention, and moderation</td><td>IP address, account data, violation history</td><td>Legal obligation / Legitimate interest</td></tr>
+          <tr><td>Sharing a question outside the App — only when you tap Share and send the link yourself</td><td>The two photos in that question, and its vote counts, become viewable by anyone holding the link, without an account</td><td>Consent (you choose to share, each time)</td></tr>
         </tbody>
       </table>
     </div>
+    <p style="margin-top:12px; color: var(--text-secondary); font-size:14px;">About shared links: only a question whose audience is set to <em>Everyone</em> can be shared this way, and only while it is still open. Once a question ends — they last 24 hours — its link no longer shows it. Questions limited to followers or friends are never shown to link visitors, and no link is ever created or posted on your behalf.</p>
   </div>
 
   <div class="card">
@@ -465,9 +467,11 @@
           <tr><td>التحليل السلوكي (داخلي فقط — لتخصيص تجربتك في التطبيق)</td><td>تفاعلات داخل التطبيق: أصوات، رفع صور، أنماط المشاركة</td><td>المصلحة المشروعة (التخصيص)</td></tr>
           <tr><td>تحليلات إدارية (إحصاءات مجمّعة، توزيع المدن)</td><td>المدينة المستنتجة من IP، بيانات الاستخدام</td><td>المصلحة المشروعة (تحسين الخدمة)</td></tr>
           <tr><td>الامتثال القانوني، منع الاحتيال، الإشراف</td><td>عنوان IP، بيانات الحساب، سجل المخالفات</td><td>الالتزام القانوني / المصلحة المشروعة</td></tr>
+          <tr><td>مشاركة سؤالك خارج التطبيق — فقط عند الضغط على «مشاركة» وإرسال الرابط بنفسك</td><td>صورتا السؤال وعدد الأصوات تصبح مرئية لأي شخص لديه الرابط، بدون حساب</td><td>الموافقة (اختيارك في كل مرة)</td></tr>
         </tbody>
       </table>
     </div>
+    <p style="margin-top:12px; color: var(--text-secondary); font-size:14px;">عن الروابط المشتركة: تتم مشاركة السؤال بهذه الطريقة فقط إذا كان جمهوره «الجميع»، وطالما كان مفتوحاً. وبعد انتهاء السؤال — ومدته ٢٤ ساعة — لا يعود الرابط يعرضه. الأسئلة المحدودة للمتابعين أو الأصدقاء لا تُعرض لزوار الرابط إطلاقاً، ولا يُنشأ أي رابط أو يُنشر نيابة عنك.</p>
   </div>
 
   <div class="card">
@@ -570,11 +574,11 @@
     if (isAr) {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'سياسة الخصوصية';
-      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 25 يوليو 2026';
+      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 9 أغسطس 2026';
     } else {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'Privacy Policy';
-      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: July 25, 2026';
+      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: August 9, 2026';
     }
   }
 </script>

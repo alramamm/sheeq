@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sheeq — وش ألبس؟ / Which one?</title>
+<meta name="description" content="Two pieces, one question. Answer it in Sheeq." />
+
+<!-- Link preview. This card is the SAME for every question, on purpose: crawlers
+     do not run JavaScript, so a per-question preview needs server-rendered HTML,
+     which static hosting cannot do. That is a deliberate deferral, not an
+     oversight — see docs/.well-known/README.md. -->
+<meta property="og:type"        content="website" />
+<meta property="og:site_name"   content="Sheeq" />
+<meta property="og:title"       content="وش ألبس؟ · Which one?" />
+<meta property="og:description" content="Two pieces, one question. Open it to answer." />
+<meta property="og:image"       content="https://sheeq.app/icon.png" />
+<meta name="twitter:card"       content="summary" />
+<meta name="robots"             content="noindex" />
+
+<style>
+  :root{
+    --bg:#0C0C0B; --bg2:#151412; --bg3:#1B1A17;
+    --text:#F2F0F4; --muted:#A6A4A4; --warm:#ECE5D9;
+    --bone:#C9C1B2; --line:rgba(242,240,244,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans Arabic',sans-serif;
+    background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;padding:28px 20px 40px;
+  }
+  .wrap{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center}
+  .mark{
+    font-family:Cormorant,Georgia,'Times New Roman',serif;
+    font-size:15px;letter-spacing:.34em;color:var(--warm);opacity:.75;
+    text-transform:uppercase;margin-bottom:26px;
+    /* letterSpacing pads the right side only — compensate physically so the
+       wordmark is optically centred in both directions (the RTL lesson from
+       the in-app share cards: transforms are physical, box styles are not). */
+    transform:translateX(.17em);
+  }
+  h1{font-size:23px;font-weight:600;text-align:center;margin-bottom:6px;letter-spacing:.01em}
+  .sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.5}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:26px}
+  .slot{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#191817;border:1px solid var(--line)}
+  .slot img{width:100%;height:100%;object-fit:cover;display:block}
+  .tag{
+    position:absolute;inset-inline-start:10px;bottom:10px;
+    font-size:11px;letter-spacing:.08em;color:var(--warm);
+    background:rgba(8,6,10,.62);padding:4px 9px;border-radius:999px;
+    backdrop-filter:blur(6px);
+  }
+  .cta{
+    display:block;width:100%;text-align:center;text-decoration:none;
+    background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
+    padding:15px 20px;border-radius:14px;margin-bottom:10px;
+  }
+  .cta.ghost{background:transparent;color:var(--warm);border:1px solid var(--line);font-weight:500}
+  .soon{
+    width:100%;text-align:center;font-size:13.5px;color:var(--muted);
+    border:1px dashed var(--line);border-radius:14px;padding:15px 20px;margin-bottom:10px;
+  }
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+  .state{text-align:center;padding:46px 0}
+  .state h2{font-size:19px;font-weight:600;margin-bottom:8px}
+  .state p{font-size:14px;color:var(--muted);line-height:1.55}
+  .spin{width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--warm);
+        border-radius:50%;animation:s .8s linear infinite;margin:46px auto}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .foot{margin-top:30px;font-size:11px;color:var(--muted);opacity:.6;letter-spacing:.06em}
+  .foot a{color:inherit}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mark">SHEEQ</div>
+  <div id="app"><div class="spin"></div></div>
+  <div class="foot"><a href="https://sheeq.app">sheeq.app</a></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Config ────────────────────────────────────────────────────────────────
+  var SUPABASE_URL = 'https://bhpzdqezxsmdruhpguqi.supabase.co';
+  // The anon key is a PUBLIC key and already ships inside the app bundle, so this
+  // is no new exposure. Every write it could reach is refused by RLS (inserts
+  // require owner_id = auth.uid(), and an anon caller has none).
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJocHpkcWV6eHNtZHJ1aHBndXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODg5ODYsImV4cCI6MjA4ODk2NDk4Nn0.O7VAX3N9S7_kpBfxvJor26OgbQ7Kx3-uBYCdo-DvAUU';
+
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq';
+  var IOS_URL  = 'https://apps.apple.com/app/id6762699699';
+
+  // ⚠️ THE ONE LINE TO FLIP ON APPLE APPROVAL. Google goes public first, so for
+  // the whole review window an iPhone visitor must NOT be handed an App Store
+  // link that 404s — a dead end is worse than no button. Flipping this needs no
+  // app build and no OTA, which is exactly why the pre-launch state lives here
+  // and not behind a flag in the app.
+  var IOS_LIVE = false;
+
+  // ── Copy ──────────────────────────────────────────────────────────────────
+  var COPY = {
+    ar: {
+      dir:'rtl', lang:'ar',
+      title:'وش ألبس؟',
+      sub:'قطعتان، وسؤال واحد. افتح التطبيق وجاوب.',
+      one:'الأولى', two:'الثانية',
+      open:'افتح في تطبيق Sheeq',
+      get_android:'حمّل التطبيق وجاوب',
+      get_ios_soon:'التطبيق قادم قريباً إلى App Store',
+      get_ios:'حمّل من App Store',
+      desktop:'افتح الرابط من جوالك للإجابة.',
+      note:'الإجابة تحتاج التطبيق — تصويت واحد لكل شخص.',
+      ended_h:'انتهى هذا السؤال',
+      ended_p:'الأسئلة تبقى مفتوحة ٢٤ ساعة فقط.',
+      private_h:'هذا السؤال خاص',
+      private_p:'صاحب السؤال اختار جمهوراً محدداً.',
+      missing_h:'رابط غير مكتمل',
+      missing_p:'تأكد من نسخ الرابط كاملاً.'
+    },
+    en: {
+      dir:'ltr', lang:'en',
+      title:'Which one?',
+      sub:'Two pieces, one question. Open the app to answer.',
+      one:'First', two:'Second',
+      open:'Open in Sheeq',
+      get_android:'Get the app to answer',
+      get_ios_soon:'Coming soon to the App Store',
+      get_ios:'Download on the App Store',
+      desktop:'Open this link on your phone to answer.',
+      note:'Answering happens in the app — one vote per person.',
+      ended_h:'This question has ended',
+      ended_p:'Questions stay open for 24 hours.',
+      private_h:'This question is private',
+      private_p:'Its owner chose a specific audience.',
+      missing_h:'Incomplete link',
+      missing_p:'Check that the whole link was copied.'
+    }
+  };
+
+  var qs = new URLSearchParams(location.search);
+  var forced = qs.get('l');
+  var isAr = forced ? forced === 'ar'
+                    : (navigator.language || 'en').toLowerCase().indexOf('ar') === 0;
+  var C = isAr ? COPY.ar : COPY.en;
+  document.documentElement.lang = C.lang;
+  document.documentElement.dir  = C.dir;
+
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS     = /iPhone|iPad|iPod/i.test(ua) ||
+                  (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPadOS
+  var app = document.getElementById('app');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
+    });
+  }
+
+  function state(h, p) {
+    app.innerHTML = '<div class="state"><h2>' + esc(h) + '</h2><p>' + esc(p) + '</p></div>' +
+                    storeBlock();
+  }
+
+  // The store block is the only platform-aware part. Android is public first, so
+  // it gets a real button while iOS is still in review; desktop gets neither,
+  // because "download" is not an action a desktop visitor can complete.
+  function storeBlock() {
+    if (isAndroid) return '<a class="cta" href="' + PLAY_URL + '">' + esc(C.get_android) + '</a>';
+    if (isIOS) {
+      return IOS_LIVE
+        ? '<a class="cta" href="' + IOS_URL + '">' + esc(C.get_ios) + '</a>'
+        : '<div class="soon">' + esc(C.get_ios_soon) + '</div>';
+    }
+    return '<div class="soon">' + esc(C.desktop) + '</div>';
+  }
+
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var id = qs.get('id') || '';
+
+  if (!UUID_RE.test(id)) { state(C.missing_h, C.missing_p); return; }
+
+  // RLS returns an active poll to the anon key and nothing else, so "no row" is
+  // the ordinary answer for an ended or deleted question, not an error.
+  var url = SUPABASE_URL + '/rest/v1/style_vote_polls' +
+            '?select=id,image1_url,image2_url,status,visibility' +
+            '&id=eq.' + encodeURIComponent(id);
+
+  fetch(url, { headers: { apikey: SUPABASE_KEY, Accept: 'application/json' } })
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (rows) {
+      var poll = rows && rows[0];
+      if (!poll || poll.status !== 'active') { state(C.ended_h, C.ended_p); return; }
+
+      // Defence in depth. The app only ever GENERATES links for public questions,
+      // but RLS gates on status alone — it never looks at visibility — so a
+      // hand-built URL would otherwise expose a friends-only question to anyone.
+      if (poll.visibility !== 'everyone') { state(C.private_h, C.private_p); return; }
+
+      // Raw storage URLs on purpose: Supabase image transformations need the Pro
+      // plan and are OFF (see getOptimizedImageUrl), so a ?width= parameter would
+      // be a broken request, not an optimisation. CSS constrains the size.
+      app.innerHTML =
+        '<h1>' + esc(C.title) + '</h1>' +
+        '<p class="sub">' + esc(C.sub) + '</p>' +
+        '<div class="pair">' +
+          '<div class="slot"><img alt="' + esc(C.one) + '" src="' + esc(poll.image1_url) + '" />' +
+            '<span class="tag">' + esc(C.one) + '</span></div>' +
+          '<div class="slot"><img alt="' + esc(C.two) + '" src="' + esc(poll.image2_url) + '" />' +
+            '<span class="tag">' + esc(C.two) + '</span></div>' +
+        '</div>' +
+        '<a class="cta ghost" href="sheeq://p/' + esc(poll.id) + '">' + esc(C.open) + '</a>' +
+        storeBlock() +
+        '<p class="note">' + esc(C.note) + '</p>';
+    })
+    .catch(function () { state(C.ended_h, C.ended_p); });
+})();
+</script>
+</body>
+</html>

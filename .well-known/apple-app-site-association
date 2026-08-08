@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["MG8LVR6QHY.app.sheeq"],
+        "components": [
+          { "/": "/p/*", "comment": "shared polls only" },
+          { "/": "/p", "comment": "shared polls only" }
+        ]
+      },
+      {
+        "appID": "MG8LVR6QHY.app.sheeq",
+        "paths": ["/p/*", "/p"]
+      }
+    ]
+  }
+}
