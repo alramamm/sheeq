@@ -95,12 +95,15 @@
   var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq';
   var IOS_URL  = 'https://apps.apple.com/app/id6762699699';
 
-  // ⚠️ THE ONE LINE TO FLIP ON APPLE APPROVAL. Google goes public first, so for
-  // the whole review window an iPhone visitor must NOT be handed an App Store
-  // link that 404s — a dead end is worse than no button. Flipping this needs no
-  // app build and no OTA, which is exactly why the pre-launch state lives here
-  // and not behind a flag in the app.
-  var IOS_LIVE = false;
+  // ⚠️ THE TWO LINES TO FLIP AT LAUNCH — one per store, because they go public on
+  // different days. A visitor must never be handed a store link they cannot
+  // install from: during closed testing the Play listing is not reachable either,
+  // and an App Store link 404s until review clears. A dead end is worse than no
+  // button, and "coming soon" is simply true until it isn't.
+  // Flipping these needs no app build and no OTA — which is the whole reason the
+  // pre-launch state lives on this page and not behind a flag in the app.
+  var ANDROID_LIVE = false;   // → true when the Google public release is live
+  var IOS_LIVE     = false;   // → true when Apple review clears
 
   // ── Copy ──────────────────────────────────────────────────────────────────
   var COPY = {
@@ -111,6 +114,7 @@
       one:'الأولى', two:'الثانية',
       open:'افتح في تطبيق Sheeq',
       get_android:'حمّل التطبيق وجاوب',
+      get_android_soon:'التطبيق قادم قريباً إلى Google Play',
       get_ios_soon:'التطبيق قادم قريباً إلى App Store',
       get_ios:'حمّل من App Store',
       desktop:'افتح الرابط من جوالك للإجابة.',
@@ -129,6 +133,7 @@
       one:'First', two:'Second',
       open:'Open in Sheeq',
       get_android:'Get the app to answer',
+      get_android_soon:'Coming soon to Google Play',
       get_ios_soon:'Coming soon to the App Store',
       get_ios:'Download on the App Store',
       desktop:'Open this link on your phone to answer.',
@@ -171,7 +176,11 @@
   // it gets a real button while iOS is still in review; desktop gets neither,
   // because "download" is not an action a desktop visitor can complete.
   function storeBlock() {
-    if (isAndroid) return '<a class="cta" href="' + PLAY_URL + '">' + esc(C.get_android) + '</a>';
+    if (isAndroid) {
+      return ANDROID_LIVE
+        ? '<a class="cta" href="' + PLAY_URL + '">' + esc(C.get_android) + '</a>'
+        : '<div class="soon">' + esc(C.get_android_soon) + '</div>';
+    }
     if (isIOS) {
       return IOS_LIVE
         ? '<a class="cta" href="' + IOS_URL + '">' + esc(C.get_ios) + '</a>'
