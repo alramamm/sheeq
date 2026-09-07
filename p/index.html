@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sheeq — وش ألبس؟ / Which one?</title>
-<meta name="description" content="Two pieces, one question. Answer it in Sheeq." />
+<title>Sheeq — أي إطلالة؟ / Which look?</title>
+<meta name="description" content="Two looks, one question. Tap the one you'd pick." />
 
 <!-- Link preview. This card is the SAME for every question, on purpose: crawlers
      do not run JavaScript, so a per-question preview needs server-rendered HTML,
@@ -12,8 +12,8 @@
      oversight — see docs/.well-known/README.md. -->
 <meta property="og:type"        content="website" />
 <meta property="og:site_name"   content="Sheeq" />
-<meta property="og:title"       content="وش ألبس؟ · Which one?" />
-<meta property="og:description" content="Two pieces, one question. Open it to answer." />
+<meta property="og:title"       content="أي إطلالة؟ · Which look?" />
+<meta property="og:description" content="Two looks, one question. Tap the one you'd pick." />
 <meta property="og:image"       content="https://sheeq.app/icon.png" />
 <meta name="twitter:card"       content="summary" />
 <meta name="robots"             content="noindex" />
@@ -44,7 +44,17 @@
   h1{font-size:23px;font-weight:600;text-align:center;margin-bottom:6px;letter-spacing:.01em}
   .sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.5}
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:26px}
-  .slot{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#191817;border:1px solid var(--line)}
+  /* A slot is a BUTTON while the question is open: the tap is the answer.
+     Reset the UA button chrome so it reads as a photo, not a control. */
+  .slot{
+    position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;
+    background:#191817;border:1px solid var(--line);padding:0;
+    font:inherit;color:inherit;text-align:inherit;cursor:default;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button.slot{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+  button.slot:active{transform:scale(.985)}
+  .pair.busy button.slot{opacity:.6;pointer-events:none}
   .slot img{width:100%;height:100%;object-fit:cover;display:block}
   .tag{
     position:absolute;inset-inline-start:10px;bottom:10px;
@@ -52,6 +62,16 @@
     background:rgba(8,6,10,.62);padding:4px 9px;border-radius:999px;
     backdrop-filter:blur(6px);
   }
+  /* The standing, after answering: a quiet band along the bottom of each
+     photo. The chosen look carries a hairline of bone and the word «إجابتك». */
+  .band{
+    position:absolute;inset-inline:0;bottom:0;padding:34px 12px 12px;
+    background:linear-gradient(180deg,rgba(8,6,10,0) 0%,rgba(8,6,10,.78) 100%);
+    display:flex;align-items:flex-end;justify-content:space-between;gap:8px;
+  }
+  .pct{font-size:22px;font-weight:600;color:var(--text);letter-spacing:.01em;line-height:1}
+  .pick{font-size:11px;letter-spacing:.06em;color:var(--warm);opacity:.9}
+  .slot.chosen{border-color:rgba(201,193,178,.55)}
   .cta{
     display:block;width:100%;text-align:center;text-decoration:none;
     background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
@@ -62,7 +82,7 @@
     width:100%;text-align:center;font-size:13.5px;color:var(--muted);
     border:1px dashed var(--line);border-radius:14px;padding:15px 20px;margin-bottom:10px;
   }
-  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+  .err{font-size:13px;color:var(--muted);text-align:center;margin:-14px 0 18px;line-height:1.5}
   .state{text-align:center;padding:46px 0}
   .state h2{font-size:19px;font-weight:600;margin-bottom:8px}
   .state p{font-size:14px;color:var(--muted);line-height:1.55}
@@ -89,7 +109,9 @@
   var SUPABASE_URL = 'https://bhpzdqezxsmdruhpguqi.supabase.co';
   // The anon key is a PUBLIC key and already ships inside the app bundle, so this
   // is no new exposure. Every write it could reach is refused by RLS (inserts
-  // require owner_id = auth.uid(), and an anon caller has none).
+  // require owner_id = auth.uid(), and an anon caller has none) — except the ONE
+  // function granted to it on purpose, cast_web_vote (20260908): a bounded
+  // increment of two display-only counters on a public, open question.
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJocHpkcWV6eHNtZHJ1aHBndXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODg5ODYsImV4cCI6MjA4ODk2NDk4Nn0.O7VAX3N9S7_kpBfxvJor26OgbQ7Kx3-uBYCdo-DvAUU';
 
   var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq';
@@ -106,44 +128,55 @@
   var IOS_LIVE     = true;    // LIVE 2026-08-25 — 1.0.0 (12) approved, listing public
 
   // ── Copy ──────────────────────────────────────────────────────────────────
+  // The noun is «إطلالة» / "look" everywhere (2026-09-06), and every English
+  // string on a judgment surface names its subject. Gender-free by
+  // construction: agreement is with the look or the answer, never the reader.
+  // Plural forms follow CLDR categories; the browser has Intl.PluralRules, so
+  // Arabic renders correctly here even where the app (Hermes) cannot yet.
   var COPY = {
     ar: {
       dir:'rtl', lang:'ar',
-      title:'وش ألبس؟',
-      sub:'قطعتان، وسؤال واحد. افتح التطبيق وجاوب.',
-      one:'الأولى', two:'الثانية',
+      title:'أي إطلالة؟',
+      sub:'إطلالتان، وسؤال واحد. الإجابة بلمسة.',
+      one:'الإطلالة الأولى', two:'الإطلالة الثانية',
+      answered_h:'وصلت إجابتك',
+      enough_h:'هذا السؤال اكتفى بإجاباته.',
+      your_pick:'إجابتك',
+      ask_cta:'اسأل عن إطلالتك في Sheeq',
       open:'افتح في تطبيق Sheeq',
-      get_android:'حمّل التطبيق وجاوب',
       get_android_soon:'التطبيق قادم قريباً إلى Google Play',
       get_ios_soon:'التطبيق قادم قريباً إلى App Store',
-      get_ios:'حمّل من App Store',
-      desktop:'افتح الرابط من جوالك للإجابة.',
-      note:'الإجابة تحتاج التطبيق — تصويت واحد لكل شخص.',
+      desktop:'افتح الرابط من جوالك لتحميل التطبيق.',
+      err:'تعذّر تسجيل إجابتك. حاول مرة أخرى.',
       ended_h:'انتهى هذا السؤال',
-      ended_p:'الأسئلة تبقى مفتوحة ٢٤ ساعة فقط.',
+      ended_p:'السؤال يُغلق عندما تكتمل إجاباته.',
       private_h:'هذا السؤال خاص',
       private_p:'صاحب السؤال اختار جمهوراً محدداً.',
       missing_h:'رابط غير مكتمل',
-      missing_p:'تأكد من نسخ الرابط كاملاً.'
+      missing_p:'تأكد من نسخ الرابط كاملاً.',
+      answers:{ zero:'{n} إجابة', one:'إجابة واحدة', two:'إجابتان', few:'{n} إجابات', many:'{n} إجابة', other:'{n} إجابة' }
     },
     en: {
       dir:'ltr', lang:'en',
-      title:'Which one?',
-      sub:'Two pieces, one question. Open the app to answer.',
-      one:'First', two:'Second',
+      title:'Which look?',
+      sub:'Two looks, one question. Tap the one you’d pick.',
+      one:'First look', two:'Second look',
+      answered_h:'Your answer is in',
+      enough_h:'This question has enough answers.',
+      your_pick:'Your pick',
+      ask_cta:'Ask about your look in Sheeq',
       open:'Open in Sheeq',
-      get_android:'Get the app to answer',
       get_android_soon:'Coming soon to Google Play',
       get_ios_soon:'Coming soon to the App Store',
-      get_ios:'Download on the App Store',
-      desktop:'Open this link on your phone to answer.',
-      note:'Answering happens in the app — one vote per person.',
+      desktop:'Open this link on your phone to get the app.',
+      err:'Your answer could not be recorded. Please try again.',
       ended_h:'This question has ended',
-      ended_p:'Questions stay open for 24 hours.',
+      ended_p:'A question closes once it has its answers.',
       private_h:'This question is private',
       private_p:'Its owner chose a specific audience.',
       missing_h:'Incomplete link',
-      missing_p:'Check that the whole link was copied.'
+      missing_p:'Check that the whole link was copied.',
+      answers:{ zero:'{n} answers', one:'1 answer', two:'{n} answers', few:'{n} answers', many:'{n} answers', other:'{n} answers' }
     }
   };
 
@@ -167,28 +200,173 @@
     });
   }
 
+  var pluralRules = null;
+  try { pluralRules = new Intl.PluralRules(C.lang); } catch (_) { pluralRules = null; }
+  function plural(forms, n) {
+    var cat = 'other';
+    try { if (pluralRules) cat = pluralRules.select(n); } catch (_) { cat = 'other'; }
+    return (forms[cat] || forms.other).replace('{n}', String(n));
+  }
+
+  // Per-device memory of the answer, so a second visit shows the standing
+  // instead of a second tap. Storage can be absent or throw (private mode,
+  // blocked site data) — every access is guarded and the page works without it.
+  function memoryKey(id) { return 'sheeq.p.answer.' + id; }
+  function readMemory(id) {
+    try { var v = localStorage.getItem(memoryKey(id)); return v === '1' || v === '2' ? Number(v) : 0; }
+    catch (_) { return 0; }
+  }
+  function writeMemory(id, choice) {
+    try { localStorage.setItem(memoryKey(id), String(choice)); } catch (_) { /* fine */ }
+  }
+
+  // ── A minimal PostgREST client in the supabase-js chain shape ─────────────
+  // Shaped like the supabase-js chain (from → select → eq, and rpc with a
+  // params object) ON PURPOSE: this file is a third client of the database,
+  // deployed from another repo, and the repo's offline guards
+  // (check-column-surface, check-rpc-surface) read exactly that shape. A column
+  // or function renamed by a migration then fails `npm run verify` instead of
+  // becoming a silent dead tap on the live page. ⚠️ Those guards cannot tell
+  // prose from code — never spell a table literal inside a comment here.
+  var HEADERS = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, Accept: 'application/json' };
+  var api = {
+    from: function (table) {
+      var cols = '*', filters = [];
+      var q = {
+        select: function (c) { cols = c; return q; },
+        eq: function (col, val) { filters.push(col + '=eq.' + encodeURIComponent(val)); return q; },
+        maybeSingle: function () {
+          var url = SUPABASE_URL + '/rest/v1/' + table + '?select=' + cols +
+                    (filters.length ? '&' + filters.join('&') : '');
+          return fetch(url, { headers: HEADERS })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (rows) { return (rows && rows[0]) || null; });
+        }
+      };
+      return q;
+    },
+    rpc: function (name, params) {
+      return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, HEADERS),
+        body: JSON.stringify(params)
+      }).then(function (r) {
+        if (!r.ok) throw new Error('rpc ' + name + ' ' + r.status);
+        return r.json();
+      });
+    }
+  };
+
+  // ── Views ─────────────────────────────────────────────────────────────────
   function state(h, p) {
     app.innerHTML = '<div class="state"><h2>' + esc(h) + '</h2><p>' + esc(p) + '</p></div>' +
                     storeBlock();
   }
 
-  // The store block is the only platform-aware part. Android is public first, so
-  // it gets a real button while iOS is still in review; desktop gets neither,
-  // because "download" is not an action a desktop visitor can complete.
-  function storeBlock() {
+  // The store block is the only platform-aware part. Each store gets a real
+  // button only once it is public; desktop gets neither, because "download" is
+  // not an action a desktop visitor can complete. After an answer the button
+  // carries the invitation — ask about your own look — not "get the app".
+  function storeBlock(label) {
     if (isAndroid) {
       return ANDROID_LIVE
-        ? '<a class="cta" href="' + PLAY_URL + '">' + esc(C.get_android) + '</a>'
+        ? '<a class="cta" href="' + PLAY_URL + '">' + esc(label || C.ask_cta) + '</a>'
         : '<div class="soon">' + esc(C.get_android_soon) + '</div>';
     }
     if (isIOS) {
       return IOS_LIVE
-        ? '<a class="cta" href="' + IOS_URL + '">' + esc(C.get_ios) + '</a>'
+        ? '<a class="cta" href="' + IOS_URL + '">' + esc(label || C.ask_cta) + '</a>'
         : '<div class="soon">' + esc(C.get_ios_soon) + '</div>';
     }
     return '<div class="soon">' + esc(C.desktop) + '</div>';
   }
 
+  function openLink(poll) {
+    return '<a class="cta ghost" href="sheeq://p/' + esc(poll.id) + '">' + esc(C.open) + '</a>';
+  }
+
+  // Raw storage URLs on purpose: Supabase image transformations need the Pro
+  // plan and are OFF (see getOptimizedImageUrl), so a ?width= parameter would
+  // be a broken request, not an optimisation. CSS constrains the size.
+  function slotImg(poll, n) {
+    var src = n === 1 ? poll.image1_url : poll.image2_url;
+    var alt = n === 1 ? C.one : C.two;
+    return '<img alt="' + esc(alt) + '" src="' + esc(src) + '" />';
+  }
+
+  // The question: two tappable looks. No tally before answering — the app hides
+  // the split until you vote, and a visible standing would steer the answer.
+  function renderQuestion(poll, errText) {
+    app.innerHTML =
+      '<h1>' + esc(C.title) + '</h1>' +
+      '<p class="sub">' + esc(C.sub) + '</p>' +
+      '<div class="pair" id="pair">' +
+        '<button type="button" class="slot" data-choice="1" aria-label="' + esc(C.one) + '">' + slotImg(poll, 1) +
+          '<span class="tag">' + esc(C.one) + '</span></button>' +
+        '<button type="button" class="slot" data-choice="2" aria-label="' + esc(C.two) + '">' + slotImg(poll, 2) +
+          '<span class="tag">' + esc(C.two) + '</span></button>' +
+      '</div>' +
+      (errText ? '<p class="err">' + esc(errText) + '</p>' : '') +
+      openLink(poll);
+
+    var pair = document.getElementById('pair');
+    var buttons = pair.querySelectorAll('button.slot');
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.addEventListener('click', function () {
+        if (pair.classList.contains('busy')) return;
+        pair.classList.add('busy');
+        answer(poll, Number(btn.getAttribute('data-choice')));
+      });
+    });
+  }
+
+  // The standing: combined app + web answers, the same sum the owner's result
+  // screen shows (pollTally in the app), so the two never disagree.
+  function renderAnswered(poll, counts, choice, headline) {
+    var s1 = (counts.vote1 || 0) + (counts.web1 || 0);
+    var s2 = (counts.vote2 || 0) + (counts.web2 || 0);
+    var total = s1 + s2;
+    var p1 = total > 0 ? Math.round(s1 / total * 100) : 0;
+    var p2 = total > 0 ? Math.round(s2 / total * 100) : 0;
+
+    function slot(n, pct) {
+      var chosen = choice === n;
+      return '<div class="slot' + (chosen ? ' chosen' : '') + '">' + slotImg(poll, n) +
+        '<div class="band"><span class="pct">' + pct + '%</span>' +
+        (chosen ? '<span class="pick">' + esc(C.your_pick) + '</span>' : '') +
+        '</div></div>';
+    }
+
+    app.innerHTML =
+      '<h1>' + esc(headline) + '</h1>' +
+      '<p class="sub">' + esc(plural(C.answers, total)) + '</p>' +
+      '<div class="pair">' + slot(1, p1) + slot(2, p2) + '</div>' +
+      storeBlock() +
+      openLink(poll);
+  }
+
+  // ── The answer ────────────────────────────────────────────────────────────
+  function answer(poll, choice) {
+    api.rpc('cast_web_vote', { p_poll_id: poll.id, p_choice: choice })
+      .then(function (res) {
+        if (res && res.success) {
+          writeMemory(poll.id, choice);
+          renderAnswered(poll, res, choice, C.answered_h);
+          return;
+        }
+        var reason = res && res.reason;
+        if (reason === 'not_public') { state(C.private_h, C.private_p); return; }
+        if (reason === 'capped')     { renderAnswered(poll, res, 0, C.enough_h); return; }
+        // poll_not_found, bad_choice, or anything unexpected: the question is
+        // no longer one this page can take an answer to.
+        state(C.ended_h, C.ended_p);
+      })
+      .catch(function () {
+        renderQuestion(poll, C.err);
+      });
+  }
+
+  // ── Load ──────────────────────────────────────────────────────────────────
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   var id = qs.get('id') || '';
 
@@ -196,36 +374,32 @@
 
   // RLS returns an active poll to the anon key and nothing else, so "no row" is
   // the ordinary answer for an ended or deleted question, not an error.
-  var url = SUPABASE_URL + '/rest/v1/style_vote_polls' +
-            '?select=id,image1_url,image2_url,status,visibility' +
-            '&id=eq.' + encodeURIComponent(id);
-
-  fetch(url, { headers: { apikey: SUPABASE_KEY, Accept: 'application/json' } })
-    .then(function (r) { return r.ok ? r.json() : []; })
-    .then(function (rows) {
-      var poll = rows && rows[0];
-      if (!poll || poll.status !== 'active') { state(C.ended_h, C.ended_p); return; }
+  api.from('style_vote_polls')
+    .select('id,image1_url,image2_url,status,visibility,expires_at,vote1_count,vote2_count,web_vote1_count,web_vote2_count')
+    .eq('id', id)
+    .maybeSingle()
+    .then(function (poll) {
+      // `expires_at` is checked here as well as in cast_web_vote: the cron that
+      // flips status runs every 15 minutes, and a tap offered in that window
+      // would only be refused.
+      var expired = !poll || poll.status !== 'active' ||
+                    !(new Date(poll.expires_at).getTime() > Date.now());
+      if (expired) { state(C.ended_h, C.ended_p); return; }
 
       // Defence in depth. The app only ever GENERATES links for public questions,
       // but RLS gates on status alone — it never looks at visibility — so a
       // hand-built URL would otherwise expose a friends-only question to anyone.
       if (poll.visibility !== 'everyone') { state(C.private_h, C.private_p); return; }
 
-      // Raw storage URLs on purpose: Supabase image transformations need the Pro
-      // plan and are OFF (see getOptimizedImageUrl), so a ?width= parameter would
-      // be a broken request, not an optimisation. CSS constrains the size.
-      app.innerHTML =
-        '<h1>' + esc(C.title) + '</h1>' +
-        '<p class="sub">' + esc(C.sub) + '</p>' +
-        '<div class="pair">' +
-          '<div class="slot"><img alt="' + esc(C.one) + '" src="' + esc(poll.image1_url) + '" />' +
-            '<span class="tag">' + esc(C.one) + '</span></div>' +
-          '<div class="slot"><img alt="' + esc(C.two) + '" src="' + esc(poll.image2_url) + '" />' +
-            '<span class="tag">' + esc(C.two) + '</span></div>' +
-        '</div>' +
-        '<a class="cta ghost" href="sheeq://p/' + esc(poll.id) + '">' + esc(C.open) + '</a>' +
-        storeBlock() +
-        '<p class="note">' + esc(C.note) + '</p>';
+      var remembered = readMemory(poll.id);
+      if (remembered) {
+        renderAnswered(poll, {
+          vote1: poll.vote1_count, vote2: poll.vote2_count,
+          web1: poll.web_vote1_count, web2: poll.web_vote2_count
+        }, remembered, C.answered_h);
+        return;
+      }
+      renderQuestion(poll, null);
     })
     .catch(function () { state(C.ended_h, C.ended_p); });
 })();
