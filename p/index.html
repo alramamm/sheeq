@@ -17,6 +17,8 @@
 <meta property="og:image"       content="https://sheeq.app/icon.png" />
 <meta name="twitter:card"       content="summary" />
 <meta name="robots"             content="noindex" />
+<link rel="icon"             href="https://sheeq.app/icon.png" />
+<link rel="apple-touch-icon" href="https://sheeq.app/icon.png" />
 
 <style>
   :root{
@@ -32,6 +34,10 @@
     align-items:center;padding:28px 20px 40px;
   }
   .wrap{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center}
+  /* The app's own icon above the wordmark — for a stranger this page is the
+     first thing of Sheeq they see, and a text-only header reads as a web form,
+     not an app. Small and quiet on purpose. */
+  .icon{width:44px;height:44px;border-radius:11px;display:block;margin-bottom:12px}
   .mark{
     font-family:Cormorant,Georgia,'Times New Roman',serif;
     font-size:15px;letter-spacing:.34em;color:var(--warm);opacity:.75;
@@ -77,7 +83,9 @@
     background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
     padding:15px 20px;border-radius:14px;margin-bottom:10px;
   }
-  .cta.ghost{background:transparent;color:var(--warm);border:1px solid var(--line);font-weight:500}
+  /* The premise, in the app's own words, directly above the invitation — the
+     one moment a stranger asks what Sheeq is. */
+  .premise{font-size:13px;color:var(--muted);text-align:center;margin-bottom:12px;line-height:1.5}
   .soon{
     width:100%;text-align:center;font-size:13.5px;color:var(--muted);
     border:1px dashed var(--line);border-radius:14px;padding:15px 20px;margin-bottom:10px;
@@ -96,6 +104,7 @@
 </head>
 <body>
 <div class="wrap">
+  <img class="icon" src="https://sheeq.app/icon.png" alt="" />
   <div class="mark">SHEEQ</div>
   <div id="app"><div class="spin"></div></div>
   <div class="foot"><a href="https://sheeq.app">sheeq.app</a></div>
@@ -140,10 +149,11 @@
       sub:'إطلالتان، وسؤال واحد. الإجابة بلمسة.',
       one:'الإطلالة الأولى', two:'الإطلالة الثانية',
       answered_h:'وصلت إجابتك',
+      first_answer:'إجابتك هي الأولى',
       enough_h:'هذا السؤال اكتفى بإجاباته.',
       your_pick:'إجابتك',
+      premise:'إطلالتين، والناس تختار',
       ask_cta:'اسأل عن إطلالتك في Sheeq',
-      open:'افتح في تطبيق Sheeq',
       get_android_soon:'التطبيق قادم قريباً إلى Google Play',
       get_ios_soon:'التطبيق قادم قريباً إلى App Store',
       desktop:'افتح الرابط من جوالك لتحميل التطبيق.',
@@ -162,10 +172,11 @@
       sub:'Two looks, one question. Tap the one you’d pick.',
       one:'First look', two:'Second look',
       answered_h:'Your answer is in',
+      first_answer:'Yours is the first answer',
       enough_h:'This question has enough answers.',
       your_pick:'Your pick',
+      premise:'Two looks. People choose.',
       ask_cta:'Ask about your look in Sheeq',
-      open:'Open in Sheeq',
       get_android_soon:'Coming soon to Google Play',
       get_ios_soon:'Coming soon to the App Store',
       desktop:'Open this link on your phone to get the app.',
@@ -281,9 +292,13 @@
     return '<div class="soon">' + esc(C.desktop) + '</div>';
   }
 
-  function openLink(poll) {
-    return '<a class="cta ghost" href="sheeq://p/' + esc(poll.id) + '">' + esc(C.open) + '</a>';
-  }
+  // There is deliberately NO "open in the app" button (removed 2026-09-07,
+  // device-found): a `sheeq://` link only resolves when the app is installed,
+  // and this page is shown precisely to people who don't have it — Safari
+  // answered "address invalid", the dead end this page exists to avoid. A
+  // visitor WITH the app never lands here: universal links / app links open
+  // the app directly, and the rare forced-into-browser case is covered by the
+  // store button, which shows "Open" for an installed app.
 
   // Raw storage URLs on purpose: Supabase image transformations need the Pro
   // plan and are OFF (see getOptimizedImageUrl), so a ?width= parameter would
@@ -306,8 +321,7 @@
         '<button type="button" class="slot" data-choice="2" aria-label="' + esc(C.two) + '">' + slotImg(poll, 2) +
           '<span class="tag">' + esc(C.two) + '</span></button>' +
       '</div>' +
-      (errText ? '<p class="err">' + esc(errText) + '</p>' : '') +
-      openLink(poll);
+      (errText ? '<p class="err">' + esc(errText) + '</p>' : '');
 
     var pair = document.getElementById('pair');
     var buttons = pair.querySelectorAll('button.slot');
@@ -322,27 +336,32 @@
 
   // The standing: combined app + web answers, the same sum the owner's result
   // screen shows (pollTally in the app), so the two never disagree.
+  // When the visitor's answer is the ONLY one, 100% against 0% is true but
+  // reads as a verdict on the other look — so until a second answer exists the
+  // page says «إجابتك هي الأولى» and shows no percentages.
   function renderAnswered(poll, counts, choice, headline) {
     var s1 = (counts.vote1 || 0) + (counts.web1 || 0);
     var s2 = (counts.vote2 || 0) + (counts.web2 || 0);
     var total = s1 + s2;
     var p1 = total > 0 ? Math.round(s1 / total * 100) : 0;
     var p2 = total > 0 ? Math.round(s2 / total * 100) : 0;
+    var solo = total === 1 && choice !== 0;
 
     function slot(n, pct) {
       var chosen = choice === n;
       return '<div class="slot' + (chosen ? ' chosen' : '') + '">' + slotImg(poll, n) +
-        '<div class="band"><span class="pct">' + pct + '%</span>' +
+        '<div class="band">' +
+        (solo ? '<span></span>' : '<span class="pct">' + pct + '%</span>') +
         (chosen ? '<span class="pick">' + esc(C.your_pick) + '</span>' : '') +
         '</div></div>';
     }
 
     app.innerHTML =
       '<h1>' + esc(headline) + '</h1>' +
-      '<p class="sub">' + esc(plural(C.answers, total)) + '</p>' +
+      '<p class="sub">' + esc(solo ? C.first_answer : plural(C.answers, total)) + '</p>' +
       '<div class="pair">' + slot(1, p1) + slot(2, p2) + '</div>' +
-      storeBlock() +
-      openLink(poll);
+      '<p class="premise">' + esc(C.premise) + '</p>' +
+      storeBlock();
   }
 
   // ── The answer ────────────────────────────────────────────────────────────
