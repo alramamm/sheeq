@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sheeq — أي إطلالة؟ / Which look?</title>
+<meta name="description" content="Two looks. People choose. Get Sheeq on the App Store or Google Play." />
+
+<!-- The one link for bios, captions and chats (2026-09-22): each phone is sent
+     to its own store. Served as /get from get.html — NOT /get/ — so the link
+     answers 200 with no trailing-slash redirect hop, and the query survives.
+     ⚠️ The path must never start with "/p": Android's intent filter uses
+     pathPrefix "/p", so such a path opens the app for anyone who has it. -->
+<meta property="og:type"        content="website" />
+<meta property="og:site_name"   content="Sheeq" />
+<meta property="og:url"         content="https://sheeq.app/get" />
+<meta property="og:title"       content="Sheeq — أي إطلالة؟ · Which look?" />
+<meta property="og:description" content="إطلالتين، والناس تختار · Two looks. People choose." />
+<meta property="og:image"       content="https://sheeq.app/icon.png" />
+<meta name="twitter:card"       content="summary" />
+<link rel="canonical"        href="https://sheeq.app/get" />
+<link rel="icon"             href="https://sheeq.app/icon.png" />
+<link rel="apple-touch-icon" href="https://sheeq.app/icon.png" />
+
+<style>
+  :root{
+    --bg:#0C0C0B; --bg2:#151412; --bg3:#1B1A17;
+    --text:#F2F0F4; --muted:#A6A4A4; --warm:#ECE5D9;
+    --bone:#C9C1B2; --line:rgba(242,240,244,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans Arabic',sans-serif;
+    background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:40px 20px;
+  }
+  .wrap{width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center}
+  .icon{
+    width:76px;height:76px;border-radius:18px;display:block;margin-bottom:16px;
+    box-shadow:0 0 0 1px rgba(236,229,217,.14),0 14px 44px rgba(0,0,0,.5);
+  }
+  .mark{
+    font-family:Cormorant,Georgia,'Times New Roman',serif;
+    font-size:15px;letter-spacing:.34em;color:var(--warm);opacity:.75;
+    text-transform:uppercase;margin-bottom:30px;
+    /* letter-spacing pads the right side only — compensate physically so the
+       wordmark is optically centred in both directions (as on /p). */
+    transform:translateX(.17em);
+  }
+  h1{font-size:24px;font-weight:600;text-align:center;margin-bottom:8px;letter-spacing:.01em}
+  .sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:30px;line-height:1.5}
+  .cta{
+    display:block;width:100%;text-align:center;text-decoration:none;
+    background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
+    padding:15px 20px;border-radius:14px;margin-bottom:10px;
+  }
+  .hint{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.55;margin-top:6px}
+  /* Desktop: the code is the action, the two stores are the alternative. A QR
+     must stay dark-on-light to scan, so it sits on its own bone card. */
+  .qr{
+    width:168px;height:168px;background:var(--warm);border-radius:16px;
+    padding:10px;margin-bottom:14px;
+  }
+  .qr svg{width:100%;height:100%;display:block;fill:#12110F}
+  .desk-line{font-size:13px;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:22px}
+  .stores{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  .store{
+    display:block;text-align:center;text-decoration:none;color:var(--warm);
+    font-size:13.5px;font-weight:600;padding:13px 10px;border-radius:14px;
+    border:1px solid var(--line);background:rgba(242,240,244,.04);
+  }
+  .foot{margin-top:36px;font-size:11px;color:var(--muted);opacity:.6;letter-spacing:.06em}
+  .foot a{color:inherit}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="icon" src="https://sheeq.app/icon.png" alt="" />
+  <div class="mark">SHEEQ</div>
+  <h1 id="title">Which look?</h1>
+  <p class="sub" id="sub">Two looks. People choose.</p>
+
+  <!-- Phone: one button, for this phone's store. -->
+  <a class="cta" id="cta" href="https://apps.apple.com/app/id6762699699" hidden></a>
+  <p class="hint" id="hint" hidden></p>
+
+  <!-- Desktop, and anything without JavaScript: both stores. The plain hrefs
+       below are the no-JS floor; the script swaps in the campaign-tagged ones. -->
+  <div id="desk" style="display:flex;flex-direction:column;align-items:center;width:100%">
+    <div class="qr" id="qr" hidden><svg viewBox="-2 -2 33 33" shape-rendering="crispEdges" role="img" aria-label="QR code: sheeq.app/get"><path d="M0 0h7v1h-7zM9 0h2v1h-2zM13 0h1v1h-1zM15 0h1v1h-1zM17 0h1v1h-1zM19 0h1v1h-1zM22 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM12 1h1v1h-1zM18 1h1v1h-1zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM12 2h4v1h-4zM17 2h1v1h-1zM19 2h1v1h-1zM22 2h1v1h-1zM24 2h3v1h-3zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h2v1h-2zM11 3h1v1h-1zM13 3h2v1h-2zM16 3h1v1h-1zM18 3h1v1h-1zM22 3h1v1h-1zM24 3h3v1h-3zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM9 4h1v1h-1zM12 4h1v1h-1zM14 4h1v1h-1zM17 4h2v1h-2zM22 4h1v1h-1zM24 4h3v1h-3zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h2v1h-2zM11 5h1v1h-1zM13 5h3v1h-3zM17 5h1v1h-1zM20 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h7v1h-7zM8 7h3v1h-3zM13 7h1v1h-1zM17 7h2v1h-2zM0 8h1v1h-1zM2 8h5v1h-5zM11 8h1v1h-1zM13 8h1v1h-1zM17 8h1v1h-1zM20 8h1v1h-1zM22 8h5v1h-5zM1 9h1v1h-1zM3 9h1v1h-1zM7 9h1v1h-1zM9 9h1v1h-1zM12 9h2v1h-2zM15 9h1v1h-1zM20 9h3v1h-3zM27 9h2v1h-2zM0 10h1v1h-1zM3 10h1v1h-1zM5 10h2v1h-2zM8 10h1v1h-1zM10 10h1v1h-1zM12 10h3v1h-3zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM0 11h1v1h-1zM4 11h1v1h-1zM7 11h1v1h-1zM12 11h1v1h-1zM16 11h1v1h-1zM19 11h1v1h-1zM23 11h1v1h-1zM25 11h2v1h-2zM3 12h1v1h-1zM6 12h1v1h-1zM13 12h2v1h-2zM17 12h3v1h-3zM23 12h3v1h-3zM27 12h2v1h-2zM0 13h3v1h-3zM4 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM12 13h1v1h-1zM17 13h1v1h-1zM19 13h1v1h-1zM22 13h1v1h-1zM24 13h1v1h-1zM26 13h1v1h-1zM28 13h1v1h-1zM1 14h1v1h-1zM4 14h3v1h-3zM11 14h1v1h-1zM13 14h1v1h-1zM17 14h1v1h-1zM20 14h1v1h-1zM24 14h2v1h-2zM27 14h1v1h-1zM1 15h2v1h-2zM4 15h2v1h-2zM8 15h2v1h-2zM11 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM17 15h2v1h-2zM21 15h1v1h-1zM23 15h1v1h-1zM28 15h1v1h-1zM0 16h2v1h-2zM3 16h2v1h-2zM6 16h1v1h-1zM8 16h1v1h-1zM11 16h1v1h-1zM13 16h1v1h-1zM17 16h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM24 16h1v1h-1zM26 16h2v1h-2zM0 17h1v1h-1zM3 17h1v1h-1zM5 17h1v1h-1zM7 17h1v1h-1zM9 17h3v1h-3zM13 17h2v1h-2zM17 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM24 17h1v1h-1zM28 17h1v1h-1zM1 18h1v1h-1zM3 18h1v1h-1zM6 18h2v1h-2zM9 18h1v1h-1zM12 18h2v1h-2zM15 18h1v1h-1zM17 18h1v1h-1zM19 18h2v1h-2zM22 18h1v1h-1zM24 18h1v1h-1zM26 18h2v1h-2zM1 19h1v1h-1zM4 19h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h1v1h-1zM17 19h1v1h-1zM19 19h1v1h-1zM23 19h1v1h-1zM27 19h1v1h-1zM1 20h1v1h-1zM3 20h1v1h-1zM5 20h2v1h-2zM8 20h2v1h-2zM11 20h1v1h-1zM13 20h1v1h-1zM15 20h1v1h-1zM17 20h7v1h-7zM25 20h1v1h-1zM8 21h2v1h-2zM11 21h2v1h-2zM17 21h2v1h-2zM20 21h1v1h-1zM24 21h2v1h-2zM27 21h1v1h-1zM0 22h7v1h-7zM11 22h1v1h-1zM13 22h2v1h-2zM17 22h2v1h-2zM20 22h1v1h-1zM22 22h1v1h-1zM24 22h1v1h-1zM27 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h2v1h-2zM11 23h2v1h-2zM14 23h1v1h-1zM17 23h1v1h-1zM20 23h1v1h-1zM24 23h1v1h-1zM26 23h1v1h-1zM28 23h1v1h-1zM0 24h1v1h-1zM2 24h3v1h-3zM6 24h1v1h-1zM8 24h1v1h-1zM10 24h1v1h-1zM12 24h2v1h-2zM17 24h8v1h-8zM26 24h2v1h-2zM0 25h1v1h-1zM2 25h3v1h-3zM6 25h1v1h-1zM8 25h2v1h-2zM11 25h1v1h-1zM13 25h1v1h-1zM17 25h1v1h-1zM20 25h2v1h-2zM25 25h2v1h-2zM0 26h1v1h-1zM2 26h3v1h-3zM6 26h1v1h-1zM8 26h1v1h-1zM10 26h1v1h-1zM12 26h1v1h-1zM14 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM23 26h1v1h-1zM25 26h2v1h-2zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM15 27h1v1h-1zM17 27h1v1h-1zM21 27h1v1h-1zM23 27h3v1h-3zM27 27h2v1h-2zM0 28h7v1h-7zM8 28h3v1h-3zM12 28h2v1h-2zM16 28h2v1h-2zM21 28h1v1h-1zM23 28h1v1h-1zM27 28h1v1h-1z"/></svg></div>
+    <p class="desk-line" id="deskline" hidden></p>
+    <div class="stores">
+      <a class="store" id="ios"     href="https://apps.apple.com/app/id6762699699">App Store</a>
+      <a class="store" id="android" href="https://play.google.com/store/apps/details?id=app.sheeq">Google Play</a>
+    </div>
+  </div>
+
+  <div class="foot"><a href="https://sheeq.app">sheeq.app</a></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Where the tap came from ───────────────────────────────────────────────
+  // `?src=tiktok` (snap, wa, …) is a free label handed to BOTH stores, so each
+  // channel shows up in its own row: App Store Connect → App Analytics →
+  // Campaigns (hidden until 5 installs through it — Apple's privacy floor), and
+  // Play Console's acquisition report by UTM source (no floor). No label = "link".
+  // Apple caps a campaign name at 30 characters; the whitelist keeps the value
+  // safe to drop into both URLs.
+  var qs = new URLSearchParams(location.search);
+  var src = (qs.get('src') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30) || 'link';
+
+  // pt = the App Store Connect provider token: fixed for the account and public
+  // by design (it rides in every campaign link). ct is the free label.
+  var IOS_URL  = 'https://apps.apple.com/app/apple-store/id6762699699' +
+                 '?pt=128806769&ct=' + src + '&mt=8';
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq&referrer=' +
+                 encodeURIComponent('utm_source=' + src + '&utm_medium=link&utm_campaign=sheeq_get');
+
+  // ── Copy ──────────────────────────────────────────────────────────────────
+  // The door register: terse and gender-free by construction — no imperative
+  // to the reader, no first-person adjective (the standing Arabic constraint on
+  // every outward-facing string). Button labels are verbal nouns for the same
+  // reason. Title + premise are the /p page's own words, verbatim.
+  var COPY = {
+    ar: {
+      dir:'rtl', lang:'ar',
+      title:'أي إطلالة؟',
+      sub:'إطلالتين، والناس تختار',
+      ios:'التحميل من App Store',
+      android:'التحميل من Google Play',
+      hint:'لم يُفتح المتجر؟ القائمة {m} ثم «الفتح في المتصفح».',
+      desktop:'التطبيق للجوال — يكفي توجيه كاميرا الجوال إلى الرمز.'
+    },
+    en: {
+      dir:'ltr', lang:'en',
+      title:'Which look?',
+      sub:'Two looks. People choose.',
+      ios:'Download on the App Store',
+      android:'Get it on Google Play',
+      hint:'Store didn’t open? The {m} menu, then “Open in browser”.',
+      desktop:'Sheeq is a phone app — point your phone’s camera at the code.'
+    }
+  };
+
+  var forced = qs.get('l');
+  var isAr = forced ? forced === 'ar'
+                    : (navigator.language || 'en').toLowerCase().indexOf('ar') === 0;
+  var C = isAr ? COPY.ar : COPY.en;
+  document.documentElement.lang = C.lang;
+  document.documentElement.dir  = C.dir;
+
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS     = /iPhone|iPad|iPod/i.test(ua) ||
+                  (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPadOS
+  // The in-app browsers of the apps this link is posted in. They are where a
+  // redirect to a store can be refused, so only they get the way-out hint.
+  var inApp = /TikTok|musical_ly|Bytedance|Snapchat|Instagram|FBAN|FBAV|FB_IAB/i.test(ua);
+
+  function $(id) { return document.getElementById(id); }
+  $('title').textContent = C.title;
+  $('sub').textContent   = C.sub;
+  $('ios').href          = IOS_URL;
+  $('android').href      = PLAY_URL;
+
+  var target = isIOS ? IOS_URL : isAndroid ? PLAY_URL : null;
+
+  if (!target) {
+    // Desktop: nothing to install here — the code carries the visitor to a phone.
+    $('qr').hidden = false;
+    $('deskline').textContent = C.desktop;
+    $('deskline').hidden = false;
+    return;
+  }
+
+  // Phone: render the fallback FIRST, then leave. If the redirect is refused (an
+  // in-app browser can), the visitor is left holding a working button, never a
+  // blank page. A tap is a user gesture, which those browsers honour more often.
+  $('desk').hidden = true;
+  var cta = $('cta');
+  cta.href = target;
+  cta.textContent = isIOS ? C.ios : C.android;
+  cta.hidden = false;
+  if (inApp) {
+    $('hint').textContent = C.hint.replace('{m}', isIOS ? '⋯' : '⋮');
+    $('hint').hidden = false;
+  }
+
+  // replace(), not assign(): the store is not stacked on top of this page, so
+  // Back does not land here and bounce straight to the store again.
+  try { location.replace(target); } catch (_) { /* the button is already there */ }
+})();
+</script>
+</body>
+</html>
