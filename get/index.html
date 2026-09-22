@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Sheeq</title>
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="https://sheeq.app/get" />
+<!-- The trailing-slash form of the store link. `/get` itself is served by
+     get.html — MEASURED on this host 2026-09-22: with both `x.html` and
+     `x/index.html` present, the extensionless path serves the FILE and only the
+     slashed path reaches the directory. So this is the one visitor `get.html`
+     cannot answer: someone who typed or pasted `sheeq.app/get/`.
+
+     A forward, not a copy of the page: two copies drift, and the `?src=` label
+     must survive the hop or the install is counted in the wrong row. The meta
+     refresh is the no-JavaScript floor; it cannot carry the query, hence the
+     script above it. -->
+<script>location.replace('https://sheeq.app/get' + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=https://sheeq.app/get" />
+</head>
+<body><a href="https://sheeq.app/get">sheeq.app/get</a></body>
+</html>
