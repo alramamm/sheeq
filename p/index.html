@@ -146,6 +146,7 @@
     ar: {
       dir:'rtl', lang:'ar',
       title:'أي إطلالة؟',
+      title_for:'أي إطلالة {occasion}؟',
       sub:'إطلالتان، وسؤال واحد. الإجابة بلمسة.',
       one:'الإطلالة الأولى', two:'الإطلالة الثانية',
       answered_h:'وصلت إجابتك',
@@ -169,6 +170,7 @@
     en: {
       dir:'ltr', lang:'en',
       title:'Which look?',
+      title_for:'Which look {occasion}?',
       sub:'Two looks, one question. Tap the one you’d pick.',
       one:'First look', two:'Second look',
       answered_h:'Your answer is in',
@@ -309,11 +311,20 @@
     return '<img alt="' + esc(alt) + '" src="' + esc(src) + '" />';
   }
 
+  // The question as the app's card asks it: «أي إطلالة للدوام؟» when the asker
+  // said what it is for (20261003), the plain «أي إطلالة؟» otherwise. A
+  // replacer FUNCTION, not a string: a string replacement reads `$&` and its
+  // siblings as patterns (RUNBOOK §45).
+  function questionTitle(poll) {
+    var phrase = poll.occasionPhrase;
+    return phrase ? C.title_for.replace('{occasion}', function () { return phrase; }) : C.title;
+  }
+
   // The question: two tappable looks. No tally before answering — the app hides
   // the split until you vote, and a visible standing would steer the answer.
   function renderQuestion(poll, errText) {
     app.innerHTML =
-      '<h1>' + esc(C.title) + '</h1>' +
+      '<h1>' + esc(questionTitle(poll)) + '</h1>' +
       '<p class="sub">' + esc(C.sub) + '</p>' +
       '<div class="pair" id="pair">' +
         '<button type="button" class="slot" data-choice="1" aria-label="' + esc(C.one) + '">' + slotImg(poll, 1) +
@@ -391,12 +402,38 @@
 
   if (!UUID_RE.test(id)) { state(C.missing_h, C.missing_p); return; }
 
+  // What the question is for (20261003), in the page's language — a SEPARATE
+  // request on purpose. The main read below turns ANY failed request into the
+  // "ended" screen, so a decoration must never ride in it: if this one fails (a
+  // permission missing, a database without the column), the page asks the
+  // plain question and every link keeps working.
+  function loadOccasionPhrase(pollId) {
+    return api.from('style_vote_polls')
+      .select('occasion,question_occasions(phrase_ar,phrase_en)')
+      .eq('id', pollId)
+      .maybeSingle()
+      .then(function (row) {
+        var o = row && row.question_occasions;
+        if (o && typeof o.length === 'number') o = o[0];
+        var phrase = o ? (isAr ? o.phrase_ar : o.phrase_en) : null;
+        return row && row.occasion && typeof phrase === 'string' && phrase.trim() ? phrase : null;
+      })
+      .catch(function () { return null; });
+  }
+
   // RLS returns an active poll to the anon key and nothing else, so "no row" is
   // the ordinary answer for an ended or deleted question, not an error.
+  var occasionPhrase = loadOccasionPhrase(id);
   api.from('style_vote_polls')
     .select('id,image1_url,image2_url,status,visibility,expires_at,vote1_count,vote2_count,web_vote1_count,web_vote2_count')
     .eq('id', id)
     .maybeSingle()
+    .then(function (poll) {
+      return occasionPhrase.then(function (phrase) {
+        if (poll) poll.occasionPhrase = phrase;
+        return poll;
+      });
+    })
     .then(function (poll) {
       // `expires_at` is checked here as well as in cast_web_vote: the cron that
       // flips status runs every 15 minutes, and a tap offered in that window
