@@ -97,6 +97,18 @@
   .spin{width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--warm);
         border-radius:50%;animation:s .8s linear infinite;margin:46px auto}
   @keyframes s{to{transform:rotate(360deg)}}
+  /* This week's theme, beside the invitation (never on the question itself):
+     the app's kicker · title · closing day, quiet, between two hairlines — the
+     button below stays the one bright thing on the page. */
+  .theme{
+    width:100%;text-align:center;padding:14px 0 15px;margin:4px 0 16px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .theme-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  /* Letter-spacing breaks Arabic joins (the app's rtlLetterSpacing rule). */
+  html[dir="rtl"] .theme-kicker{letter-spacing:0}
+  .theme-title{font-size:18px;font-weight:600;color:var(--warm);line-height:1.35;margin-bottom:3px}
+  .theme-when{font-size:12.5px;color:var(--muted)}
   .foot{margin-top:30px;font-size:11px;color:var(--muted);opacity:.6;letter-spacing:.06em}
   .foot a{color:inherit}
   [hidden]{display:none !important}
@@ -123,8 +135,22 @@
   // increment of two display-only counters on a public, open question.
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJocHpkcWV6eHNtZHJ1aHBndXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODg5ODYsImV4cCI6MjA4ODk2NDk4Nn0.O7VAX3N9S7_kpBfxvJor26OgbQ7Kx3-uBYCdo-DvAUU';
 
-  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq';
-  var IOS_URL  = 'https://apps.apple.com/app/id6762699699';
+  var qs = new URLSearchParams(location.search);
+
+  // Installs from a shared question are counted per source, the way /get counts
+  // them (get.html): `src` is a free label the sharer may add to the link
+  // (…&src=ep2_snap), so one post shows up in its own row — App Store Connect →
+  // Campaigns (hidden until 5 installs come through it) and Play Console's
+  // acquisition report by UTM source. A link straight from the app's share
+  // sheet has none and counts as "question". Same whitelist and 30-character cap
+  // as /get (Apple's limit on a campaign name). The app reads only `id` from
+  // this URL (getDeepLinkRoute), so the extra parameter is invisible to it.
+  var src = (qs.get('src') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30) || 'question';
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq&referrer=' +
+                 encodeURIComponent('utm_source=' + src + '&utm_medium=share&utm_campaign=sheeq_question');
+  // pt = the App Store Connect provider token, public by design (as on /get).
+  var IOS_URL  = 'https://apps.apple.com/app/apple-store/id6762699699' +
+                 '?pt=128806769&ct=' + src + '&mt=8';
 
   // ⚠️ THE TWO LINES TO FLIP AT LAUNCH — one per store, because they go public on
   // different days. A visitor must never be handed a store link they cannot
@@ -165,6 +191,15 @@
       private_p:'صاحب السؤال اختار جمهوراً محدداً.',
       missing_h:'رابط غير مكتمل',
       missing_p:'تأكد من نسخ الرابط كاملاً.',
+      // This week's theme — the app's own strings (i18n brief.*), word for word.
+      theme_kicker:'ثيمة الأسبوع',
+      theme_next_kicker:'قادمة',
+      closes_today:'تُغلق المشاركات اليوم',
+      closes_tomorrow:'تُغلق المشاركات غداً',
+      closes_on:'تُغلق المشاركات {when}',
+      starts_today:'تبدأ اليوم',
+      starts_tomorrow:'تبدأ غداً',
+      starts_on:'تبدأ {when}',
       answers:{ zero:'{n} إجابة', one:'إجابة واحدة', two:'إجابتان', few:'{n} إجابات', many:'{n} إجابة', other:'{n} إجابة' }
     },
     en: {
@@ -189,11 +224,18 @@
       private_p:'Its owner chose a specific audience.',
       missing_h:'Incomplete link',
       missing_p:'Check that the whole link was copied.',
+      theme_kicker:'This week’s theme',
+      theme_next_kicker:'Coming',
+      closes_today:'Entries close today',
+      closes_tomorrow:'Entries close tomorrow',
+      closes_on:'Entries close {when}',
+      starts_today:'Starts today',
+      starts_tomorrow:'Starts tomorrow',
+      starts_on:'Starts {when}',
       answers:{ zero:'{n} answers', one:'1 answer', two:'{n} answers', few:'{n} answers', many:'{n} answers', other:'{n} answers' }
     }
   };
 
-  var qs = new URLSearchParams(location.search);
   var forced = qs.get('l');
   var isAr = forced ? forced === 'ar'
                     : (navigator.language || 'en').toLowerCase().indexOf('ar') === 0;
@@ -244,13 +286,23 @@
   var HEADERS = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, Accept: 'application/json' };
   var api = {
     from: function (table) {
-      var cols = '*', filters = [];
+      var cols = '*', filters = [], order = null, lim = null;
       var q = {
         select: function (c) { cols = c; return q; },
-        eq: function (col, val) { filters.push(col + '=eq.' + encodeURIComponent(val)); return q; },
+        eq:  function (col, val) { filters.push(col + '=eq.'  + encodeURIComponent(val)); return q; },
+        lte: function (col, val) { filters.push(col + '=lte.' + encodeURIComponent(val)); return q; },
+        gt:  function (col, val) { filters.push(col + '=gt.'  + encodeURIComponent(val)); return q; },
+        // supabase-js semantics: ascending unless told otherwise.
+        order: function (col, opts) {
+          order = col + '.' + (opts && opts.ascending === false ? 'desc' : 'asc');
+          return q;
+        },
+        limit: function (n) { lim = n; return q; },
         maybeSingle: function () {
           var url = SUPABASE_URL + '/rest/v1/' + table + '?select=' + cols +
-                    (filters.length ? '&' + filters.join('&') : '');
+                    (filters.length ? '&' + filters.join('&') : '') +
+                    (order ? '&order=' + order : '') +
+                    (lim ? '&limit=' + lim : '');
           return fetch(url, { headers: HEADERS })
             .then(function (r) { return r.ok ? r.json() : []; })
             .then(function (rows) { return (rows && rows[0]) || null; });
@@ -270,10 +322,91 @@
     }
   };
 
+  // ── This week's theme ─────────────────────────────────────────────────────
+  // Every shared question doubles as the theme's invitation: beside the store
+  // button, the theme in the app's own words (kicker · title · closing day).
+  // Live means what the server means (f_live_brief_tags): switched on, started,
+  // not yet ended. With nothing live, the nearest theme the house chose to
+  // announce ahead, as «قادمة» / "Coming" — never both, as on the app's upload
+  // page, where a coming line under an open theme would invite people to wait.
+  // A SEPARATE request that fails to nothing, like the occasion phrase: a
+  // decoration must never break the page. Never on the question itself — there
+  // the tap is the visitor's one job.
+  // ⚠️ "now" is the visitor's clock, so a phone set days off can show a theme a
+  // little early or late; the server refuses an entry outside the window anyway.
+  var themeHtml = '';
+
+  function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+
+  // The app's dayPhrase (src/utils/brief.ts), rule for rule: calendar days on
+  // this device; today / tomorrow; a weekday while it is unambiguous (within
+  // six days), a date after that. A replacer function, never a string ($&).
+  function dayPhrase(iso, verb) {
+    var at = new Date(iso);
+    var days = Math.round((startOfDay(at) - startOfDay(new Date())) / 86400000);
+    if (!isFinite(days) || days <= 0) return C[verb + '_today'];
+    if (days === 1) return C[verb + '_tomorrow'];
+    var when = at.toLocaleDateString(isAr ? 'ar' : 'en-US',
+      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' });
+    return C[verb + '_on'].replace('{when}', function () { return when; });
+  }
+
+  // The reader's language first, the other if it is somehow blank (briefLabel).
+  function themeLabel(row) {
+    var first  = isAr ? row.label_ar : row.label_en;
+    var second = isAr ? row.label_en : row.label_ar;
+    return String(first || '').trim() || String(second || '').trim();
+  }
+
+  function renderTheme(row, live) {
+    var label = themeLabel(row);
+    if (!label) return '';
+    return '<div class="theme">' +
+      '<div class="theme-kicker">' + esc(live ? C.theme_kicker : C.theme_next_kicker) + '</div>' +
+      '<div class="theme-title">' + esc(label) + '</div>' +
+      '<div class="theme-when">' +
+        esc(live ? dayPhrase(row.ends_at, 'closes') : dayPhrase(row.starts_at, 'starts')) +
+      '</div></div>';
+  }
+
+  // Views re-render whole, so each carries the slot; a theme that arrives after
+  // a view is drawn fills the slot already on screen.
+  function themeSlot() { return '<div id="theme-slot">' + themeHtml + '</div>'; }
+
+  function loadTheme() {
+    var now = new Date().toISOString();
+    return api.from('hashtags')
+      .select('label_ar,label_en,starts_at,ends_at')
+      .eq('is_active', true)
+      .lte('starts_at', now)
+      .gt('ends_at', now)
+      .order('starts_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(function (live) {
+        if (live) return renderTheme(live, true);
+        return api.from('hashtags')
+          .select('label_ar,label_en,starts_at,ends_at')
+          .eq('is_active', true)
+          .eq('announce_ahead', true)
+          .gt('starts_at', now)
+          .order('starts_at', { ascending: true })
+          .limit(1)
+          .maybeSingle()
+          .then(function (next) { return next ? renderTheme(next, false) : ''; });
+      })
+      .then(function (html) {
+        themeHtml = html;
+        var slot = document.getElementById('theme-slot');
+        if (slot) slot.innerHTML = html;
+      })
+      .catch(function () { /* no theme line — the page is whole without it */ });
+  }
+
   // ── Views ─────────────────────────────────────────────────────────────────
   function state(h, p) {
     app.innerHTML = '<div class="state"><h2>' + esc(h) + '</h2><p>' + esc(p) + '</p></div>' +
-                    storeBlock();
+                    themeSlot() + storeBlock();
   }
 
   // The store block is the only platform-aware part. Each store gets a real
@@ -372,7 +505,7 @@
       '<p class="sub">' + esc(solo ? C.first_answer : plural(C.answers, total)) + '</p>' +
       '<div class="pair">' + slot(1, p1) + slot(2, p2) + '</div>' +
       '<p class="premise">' + esc(C.premise) + '</p>' +
-      storeBlock();
+      themeSlot() + storeBlock();
   }
 
   // ── The answer ────────────────────────────────────────────────────────────
@@ -400,6 +533,7 @@
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   var id = qs.get('id') || '';
 
+  loadTheme();
   if (!UUID_RE.test(id)) { state(C.missing_h, C.missing_p); return; }
 
   // What the question is for (20261003), in the page's language — a SEPARATE
