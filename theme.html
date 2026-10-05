@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sheeq — ثيمة الأسبوع / This week’s theme</title>
+<meta name="description" content="One theme, a thousand ways to wear it. Get Sheeq on the App Store or Google Play." />
+
+<!-- This week's theme, for a visitor WITHOUT the app (growth P7, 9c — 2026-10-05).
+     A phone WITH the app never loads this page: Android 1.0.2+ claims the exact
+     paths /theme and /theme/ (intent filter) and iOS does the same through the
+     AASA beside it, so the OS hands the link to the app, which opens the theme's
+     own page (app/theme.tsx). Everyone else sees the theme in the app's words and
+     one button to this phone's store.
+     Served as /theme from theme.html — NOT /theme/ — so the link answers 200 with
+     no trailing-slash redirect hop and `?src=` survives (theme/index.html forwards
+     a pasted /theme/). Unlike /get there is no automatic redirect: the theme IS
+     the pitch, and the visitor came for it. -->
+<meta property="og:type"        content="website" />
+<meta property="og:site_name"   content="Sheeq" />
+<meta property="og:url"         content="https://sheeq.app/theme" />
+<meta property="og:title"       content="Sheeq — ثيمة الأسبوع · This week’s theme" />
+<meta property="og:description" content="ثيمة واحدة، وألف طريقة لارتدائها · One theme, a thousand ways to wear it." />
+<meta property="og:image"       content="https://sheeq.app/icon.png" />
+<meta name="twitter:card"       content="summary" />
+<link rel="canonical"        href="https://sheeq.app/theme" />
+<link rel="icon"             href="https://sheeq.app/icon.png" />
+<link rel="apple-touch-icon" href="https://sheeq.app/icon.png" />
+
+<style>
+  :root{
+    --bg:#0C0C0B; --bg2:#151412; --bg3:#1B1A17;
+    --text:#F2F0F4; --muted:#A6A4A4; --warm:#ECE5D9;
+    --bone:#C9C1B2; --line:rgba(242,240,244,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans Arabic',sans-serif;
+    background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:40px 20px;
+  }
+  .wrap{width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center}
+  .icon{
+    width:76px;height:76px;border-radius:18px;display:block;margin-bottom:16px;
+    box-shadow:0 0 0 1px rgba(236,229,217,.14),0 14px 44px rgba(0,0,0,.5);
+  }
+  .mark{
+    font-family:Cormorant,Georgia,'Times New Roman',serif;
+    font-size:15px;letter-spacing:.34em;color:var(--warm);opacity:.75;
+    text-transform:uppercase;margin-bottom:30px;
+    /* letter-spacing pads the right side only — compensate physically so the
+       wordmark is optically centred in both directions (as on /get and /p). */
+    transform:translateX(.17em);
+  }
+  h1{font-size:24px;font-weight:600;text-align:center;margin-bottom:8px;letter-spacing:.01em}
+  .sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:30px;line-height:1.5}
+  /* The theme in the app's own order: kicker · title · line · day. The button
+     below stays the one bright thing on the page. */
+  .theme{width:100%;text-align:center;margin-bottom:30px}
+  .theme-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  /* Letter-spacing breaks Arabic joins (the app's rtlLetterSpacing rule). */
+  html[dir="rtl"] .theme-kicker{letter-spacing:0}
+  .theme-title{color:var(--warm);line-height:1.35}
+  .theme-line{font-size:14px;color:var(--muted);line-height:1.6;margin:4px 0 12px}
+  .theme-when{font-size:12.5px;color:var(--muted)}
+  .cta{
+    display:block;width:100%;text-align:center;text-decoration:none;
+    background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
+    padding:15px 20px;border-radius:14px;margin-bottom:10px;
+  }
+  .hint{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.55;margin-top:6px}
+  /* Desktop: the code is the action, the two stores are the alternative. A QR
+     must stay dark-on-light to scan, so it sits on its own bone card. */
+  .qr{
+    width:168px;height:168px;background:var(--warm);border-radius:16px;
+    padding:10px;margin-bottom:14px;
+  }
+  .qr svg{width:100%;height:100%;display:block;fill:#12110F}
+  .desk-line{font-size:13px;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:22px}
+  .stores{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  .store{
+    display:block;text-align:center;text-decoration:none;color:var(--warm);
+    font-size:13.5px;font-weight:600;padding:13px 10px;border-radius:14px;
+    border:1px solid var(--line);background:rgba(242,240,244,.04);
+  }
+  .foot{margin-top:36px;font-size:11px;color:var(--muted);opacity:.6;letter-spacing:.06em}
+  .foot a{color:inherit}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="icon" src="https://sheeq.app/icon.png" alt="" />
+  <div class="mark">SHEEQ</div>
+
+  <!-- A live theme, or the next one the house announced ahead. -->
+  <div class="theme" id="theme" hidden>
+    <div class="theme-kicker" id="kicker"></div>
+    <h1 class="theme-title" id="ttitle" dir="auto"></h1>
+    <p class="theme-line" id="tline" dir="auto" hidden></p>
+    <div class="theme-when" id="twhen"></div>
+  </div>
+
+  <!-- No theme (none live or announced, or the read failed): the premise, as on
+       /get. Also the no-JavaScript floor, which is why it starts visible. -->
+  <div id="premise">
+    <h1 id="title">Which look?</h1>
+    <p class="sub" id="sub">Two looks. People choose.</p>
+  </div>
+
+  <!-- Phone: one button, for this phone's store. -->
+  <a class="cta" id="cta" href="https://apps.apple.com/app/id6762699699" hidden></a>
+  <p class="hint" id="hint" hidden></p>
+
+  <!-- Desktop, and anything without JavaScript: both stores. The plain hrefs
+       below are the no-JS floor; the script swaps in the campaign-tagged ones. -->
+  <div id="desk" style="display:flex;flex-direction:column;align-items:center;width:100%">
+    <div class="qr" id="qr" hidden><svg viewBox="-2 -2 33 33" shape-rendering="crispEdges" role="img" aria-label="QR code: sheeq.app/theme"><path d="M0 0h7v1h-7zM8 0h1v1h-1zM10 0h3v1h-3zM15 0h4v1h-4zM22 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h2v1h-2zM16 1h1v1h-1zM19 1h1v1h-1zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM11 2h1v1h-1zM15 2h2v1h-2zM19 2h2v1h-2zM22 2h1v1h-1zM24 2h3v1h-3zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM10 3h2v1h-2zM16 3h5v1h-5zM22 3h1v1h-1zM24 3h3v1h-3zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h5v1h-5zM14 4h3v1h-3zM19 4h1v1h-1zM22 4h1v1h-1zM24 4h3v1h-3zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM15 5h2v1h-2zM20 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h7v1h-7zM9 7h3v1h-3zM13 7h1v1h-1zM15 7h2v1h-2zM19 7h1v1h-1zM0 8h1v1h-1zM3 8h7v1h-7zM13 8h1v1h-1zM17 8h1v1h-1zM19 8h1v1h-1zM21 8h1v1h-1zM24 8h1v1h-1zM26 8h3v1h-3zM0 9h6v1h-6zM10 9h1v1h-1zM12 9h2v1h-2zM16 9h1v1h-1zM19 9h1v1h-1zM21 9h1v1h-1zM23 9h2v1h-2zM26 9h2v1h-2zM6 10h1v1h-1zM8 10h1v1h-1zM11 10h3v1h-3zM15 10h2v1h-2zM18 10h1v1h-1zM20 10h2v1h-2zM24 10h1v1h-1zM26 10h1v1h-1zM1 11h5v1h-5zM8 11h1v1h-1zM12 11h2v1h-2zM16 11h2v1h-2zM21 11h2v1h-2zM24 11h2v1h-2zM28 11h1v1h-1zM0 12h1v1h-1zM2 12h2v1h-2zM6 12h1v1h-1zM9 12h2v1h-2zM13 12h1v1h-1zM15 12h2v1h-2zM20 12h4v1h-4zM28 12h1v1h-1zM0 13h1v1h-1zM2 13h1v1h-1zM5 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM12 13h3v1h-3zM16 13h1v1h-1zM22 13h7v1h-7zM1 14h1v1h-1zM6 14h1v1h-1zM8 14h3v1h-3zM13 14h1v1h-1zM16 14h4v1h-4zM23 14h2v1h-2zM26 14h1v1h-1zM28 14h1v1h-1zM2 15h1v1h-1zM4 15h1v1h-1zM8 15h5v1h-5zM15 15h1v1h-1zM18 15h1v1h-1zM23 15h2v1h-2zM26 15h1v1h-1zM28 15h1v1h-1zM2 16h2v1h-2zM6 16h2v1h-2zM10 16h1v1h-1zM14 16h1v1h-1zM16 16h1v1h-1zM23 16h1v1h-1zM25 16h1v1h-1zM0 17h2v1h-2zM3 17h2v1h-2zM11 17h1v1h-1zM13 17h2v1h-2zM16 17h5v1h-5zM24 17h1v1h-1zM26 17h2v1h-2zM0 18h2v1h-2zM5 18h3v1h-3zM10 18h2v1h-2zM15 18h1v1h-1zM18 18h2v1h-2zM21 18h5v1h-5zM28 18h1v1h-1zM0 19h3v1h-3zM4 19h2v1h-2zM10 19h2v1h-2zM14 19h1v1h-1zM21 19h1v1h-1zM25 19h2v1h-2zM0 20h2v1h-2zM3 20h1v1h-1zM5 20h2v1h-2zM9 20h2v1h-2zM13 20h6v1h-6zM20 20h8v1h-8zM8 21h1v1h-1zM11 21h1v1h-1zM14 21h1v1h-1zM17 21h1v1h-1zM20 21h1v1h-1zM24 21h2v1h-2zM0 22h7v1h-7zM8 22h2v1h-2zM11 22h1v1h-1zM14 22h1v1h-1zM17 22h1v1h-1zM19 22h2v1h-2zM22 22h1v1h-1zM24 22h2v1h-2zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h2v1h-2zM12 23h1v1h-1zM14 23h2v1h-2zM17 23h1v1h-1zM20 23h1v1h-1zM24 23h1v1h-1zM0 24h1v1h-1zM2 24h3v1h-3zM6 24h1v1h-1zM8 24h1v1h-1zM10 24h1v1h-1zM13 24h2v1h-2zM16 24h1v1h-1zM19 24h7v1h-7zM0 25h1v1h-1zM2 25h3v1h-3zM6 25h1v1h-1zM8 25h1v1h-1zM13 25h1v1h-1zM19 25h3v1h-3zM27 25h1v1h-1zM0 26h1v1h-1zM2 26h3v1h-3zM6 26h1v1h-1zM9 26h1v1h-1zM13 26h4v1h-4zM18 26h2v1h-2zM23 26h2v1h-2zM26 26h3v1h-3zM0 27h1v1h-1zM6 27h1v1h-1zM9 27h2v1h-2zM13 27h1v1h-1zM15 27h2v1h-2zM19 27h1v1h-1zM22 27h2v1h-2zM25 27h2v1h-2zM28 27h1v1h-1zM0 28h7v1h-7zM8 28h1v1h-1zM12 28h5v1h-5zM19 28h3v1h-3zM23 28h3v1h-3z"/></svg></div>
+    <p class="desk-line" id="deskline" hidden></p>
+    <div class="stores">
+      <a class="store" id="ios"     href="https://apps.apple.com/app/id6762699699">App Store</a>
+      <a class="store" id="android" href="https://play.google.com/store/apps/details?id=app.sheeq">Google Play</a>
+    </div>
+  </div>
+
+  <div class="foot"><a href="https://sheeq.app">sheeq.app</a></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Config ────────────────────────────────────────────────────────────────
+  // The anon key is a PUBLIC key and already ships inside the app bundle and on
+  // /p. This page only reads: the theme a visitor may see (the hashtags_read
+  // policy lets anon see a started theme or one announced ahead, nothing else).
+  var SUPABASE_URL = 'https://bhpzdqezxsmdruhpguqi.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJocHpkcWV6eHNtZHJ1aHBndXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODg5ODYsImV4cCI6MjA4ODk2NDk4Nn0.O7VAX3N9S7_kpBfxvJor26OgbQ7Kx3-uBYCdo-DvAUU';
+
+  // ── Where the tap came from ───────────────────────────────────────────────
+  // `?src=<label>` is handed to BOTH stores, exactly as on /get: App Store
+  // Connect → Campaigns (hidden until 5 installs come through it) and Play
+  // Console's acquisition report by UTM source. No label = "theme". Same
+  // whitelist and 30-character cap (Apple's limit on a campaign name). The app
+  // reads nothing from this URL's query, so the label is invisible to it.
+  var qs = new URLSearchParams(location.search);
+  var src = (qs.get('src') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30) || 'theme';
+  var IOS_URL  = 'https://apps.apple.com/app/apple-store/id6762699699' +
+                 '?pt=128806769&ct=' + src + '&mt=8';
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.sheeq&referrer=' +
+                 encodeURIComponent('utm_source=' + src + '&utm_medium=link&utm_campaign=sheeq_theme');
+
+  // ── Copy ──────────────────────────────────────────────────────────────────
+  // Nothing new: the theme lines are the app's own strings (i18n brief.*) as
+  // /p carries them, and the premise, store buttons, hint and desktop line are
+  // /get's, word for word. The door register: gender-free, no imperative to the
+  // reader; button labels are verbal nouns.
+  var COPY = {
+    ar: {
+      dir:'rtl', lang:'ar',
+      title:'أي إطلالة؟',
+      sub:'إطلالتين، والناس تختار',
+      ios:'التحميل من App Store',
+      android:'التحميل من Google Play',
+      hint:'لم يُفتح المتجر؟ القائمة {m} ثم «الفتح في المتصفح».',
+      desktop:'التطبيق للجوال — يكفي توجيه كاميرا الجوال إلى الرمز.',
+      theme_kicker:'ثيمة الأسبوع',
+      theme_next_kicker:'قادمة',
+      closes_today:'تُغلق المشاركات اليوم',
+      closes_tomorrow:'تُغلق المشاركات غداً',
+      closes_on:'تُغلق المشاركات {when}',
+      starts_today:'تبدأ اليوم',
+      starts_tomorrow:'تبدأ غداً',
+      starts_on:'تبدأ {when}'
+    },
+    en: {
+      dir:'ltr', lang:'en',
+      title:'Which look?',
+      sub:'Two looks. People choose.',
+      ios:'Download on the App Store',
+      android:'Get it on Google Play',
+      hint:'Store didn’t open? The {m} menu, then “Open in browser”.',
+      desktop:'Sheeq is a phone app — point your phone’s camera at the code.',
+      theme_kicker:'This week’s theme',
+      theme_next_kicker:'Coming',
+      closes_today:'Entries close today',
+      closes_tomorrow:'Entries close tomorrow',
+      closes_on:'Entries close {when}',
+      starts_today:'Starts today',
+      starts_tomorrow:'Starts tomorrow',
+      starts_on:'Starts {when}'
+    }
+  };
+
+  var forced = qs.get('l');
+  var isAr = forced ? forced === 'ar'
+                    : (navigator.language || 'en').toLowerCase().indexOf('ar') === 0;
+  var C = isAr ? COPY.ar : COPY.en;
+  document.documentElement.lang = C.lang;
+  document.documentElement.dir  = C.dir;
+
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS     = /iPhone|iPad|iPod/i.test(ua) ||
+                  (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPadOS
+  // The in-app browsers this link is posted in: a store link can be refused
+  // there, so only they get the way-out hint.
+  var inApp = /TikTok|musical_ly|Bytedance|Snapchat|Instagram|FBAN|FBAV|FB_IAB/i.test(ua);
+
+  function $(id) { return document.getElementById(id); }
+  $('title').textContent = C.title;
+  $('sub').textContent   = C.sub;
+  $('ios').href          = IOS_URL;
+  $('android').href      = PLAY_URL;
+
+  // The premise waits for the theme read, so a live theme never flashes the
+  // premise first. It returns if the read fails, finds nothing, or is slow.
+  $('premise').hidden = true;
+
+  var target = isIOS ? IOS_URL : isAndroid ? PLAY_URL : null;
+  if (target) {
+    // Phone: one button for this phone's store. A tap is a user gesture, which
+    // in-app browsers honour more often than a scripted redirect.
+    $('desk').hidden = true;
+    var cta = $('cta');
+    cta.href = target;
+    cta.textContent = isIOS ? C.ios : C.android;
+    cta.hidden = false;
+    if (inApp) {
+      $('hint').textContent = C.hint.replace('{m}', isIOS ? '⋯' : '⋮');
+      $('hint').hidden = false;
+    }
+  } else {
+    // Desktop: nothing to install here — the code carries the visitor to a phone.
+    $('qr').hidden = false;
+    $('deskline').textContent = C.desktop;
+    $('deskline').hidden = false;
+  }
+
+  // ── A minimal PostgREST client in the supabase-js chain shape ─────────────
+  // Same shape as /p's ON PURPOSE: this page is another client of the database,
+  // deployed from another repo, and the repo's offline guards
+  // (check-column-surface, check-rpc-surface) read exactly that shape — a column
+  // renamed by a migration fails `npm run verify` instead of silently emptying
+  // the live page. ⚠️ Those guards cannot tell prose from code — never spell a
+  // table literal inside a comment here.
+  var HEADERS = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, Accept: 'application/json' };
+  var api = {
+    from: function (table) {
+      var cols = '*', filters = [], order = null, lim = null;
+      var q = {
+        select: function (c) { cols = c; return q; },
+        eq:  function (col, val) { filters.push(col + '=eq.'  + encodeURIComponent(val)); return q; },
+        lte: function (col, val) { filters.push(col + '=lte.' + encodeURIComponent(val)); return q; },
+        gt:  function (col, val) { filters.push(col + '=gt.'  + encodeURIComponent(val)); return q; },
+        // supabase-js semantics: ascending unless told otherwise.
+        order: function (col, opts) {
+          order = col + '.' + (opts && opts.ascending === false ? 'desc' : 'asc');
+          return q;
+        },
+        limit: function (n) { lim = n; return q; },
+        maybeSingle: function () {
+          var url = SUPABASE_URL + '/rest/v1/' + table + '?select=' + cols +
+                    (filters.length ? '&' + filters.join('&') : '') +
+                    (order ? '&order=' + order : '') +
+                    (lim ? '&limit=' + lim : '');
+          return fetch(url, { headers: HEADERS })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (rows) { return (rows && rows[0]) || null; });
+        }
+      };
+      return q;
+    }
+  };
+
+  // ── The theme ─────────────────────────────────────────────────────────────
+  // Live means what the server means (f_live_brief_tags): switched on, started,
+  // not yet ended. With nothing live, the nearest theme the house announced
+  // ahead, as «قادمة» / "Coming" — never both, as in the app. ⚠️ "now" is the
+  // visitor's clock, so a phone set days off can show a theme a little early or
+  // late; the server refuses an entry outside the window anyway.
+  function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+
+  // The app's dayPhrase (src/utils/brief.ts), rule for rule, as on /p: calendar
+  // days on this device; today / tomorrow; a weekday while it is unambiguous
+  // (within six days), a date after that. A replacer function, never a string.
+  function dayPhrase(iso, verb) {
+    var at = new Date(iso);
+    var days = Math.round((startOfDay(at) - startOfDay(new Date())) / 86400000);
+    if (!isFinite(days) || days <= 0) return C[verb + '_today'];
+    if (days === 1) return C[verb + '_tomorrow'];
+    var when = at.toLocaleDateString(isAr ? 'ar' : 'en-US',
+      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' });
+    return C[verb + '_on'].replace('{when}', function () { return when; });
+  }
+
+  // House text is typed into the app's panel, which can carry invisible
+  // direction marks (a right-to-left mark at the start of an English line flips
+  // its punctuation). Stripped here as well as fixed at the source.
+  function clean(s) {
+    return String(s || '').replace(/[‎‏‪-‮⁦-⁩؜﻿]/g, '').trim();
+  }
+  // The reader's language first, the other if it is somehow blank (briefLabel).
+  function pick(row, field) {
+    var first  = clean(isAr ? row[field + '_ar'] : row[field + '_en']);
+    return first || clean(isAr ? row[field + '_en'] : row[field + '_ar']);
+  }
+
+  var settled = false;
+  function showPremise() {
+    if (settled) return;
+    settled = true;
+    $('premise').hidden = false;
+  }
+  function showTheme(row, live) {
+    if (settled) return;
+    var label = pick(row, 'label');
+    if (!label) { showPremise(); return; }
+    settled = true;
+    $('kicker').textContent = live ? C.theme_kicker : C.theme_next_kicker;
+    $('ttitle').textContent = label;
+    var line = pick(row, 'description');
+    if (line) { $('tline').textContent = line; $('tline').hidden = false; }
+    $('twhen').textContent = live ? dayPhrase(row.ends_at, 'closes') : dayPhrase(row.starts_at, 'starts');
+    $('theme').hidden = false;
+  }
+
+  // A slow network must not leave the page without a headline.
+  setTimeout(showPremise, 4000);
+
+  var now = new Date().toISOString();
+  api.from('hashtags')
+    .select('label_ar,label_en,description_ar,description_en,starts_at,ends_at')
+    .eq('is_active', true)
+    .lte('starts_at', now)
+    .gt('ends_at', now)
+    .order('starts_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+    .then(function (live) {
+      if (live) { showTheme(live, true); return; }
+      return api.from('hashtags')
+        .select('label_ar,label_en,description_ar,description_en,starts_at,ends_at')
+        .eq('is_active', true)
+        .eq('announce_ahead', true)
+        .gt('starts_at', now)
+        .order('starts_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+        .then(function (next) { if (next) showTheme(next, false); else showPremise(); });
+    })
+    .catch(showPremise);
+})();
+</script>
+</body>
+</html>

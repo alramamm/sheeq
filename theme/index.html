@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Sheeq</title>
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="https://sheeq.app/theme" />
+<!-- The trailing-slash form of the theme link. `/theme` itself is served by
+     theme.html — on this host the extensionless path serves the FILE and only
+     the slashed path reaches the directory (measured for /get, 2026-09-22). So
+     this is the one visitor theme.html cannot answer: someone who typed or
+     pasted `sheeq.app/theme/`. A phone with the app never gets here — both
+     platforms claim the exact `/theme/` too.
+
+     A forward, not a copy of the page: two copies drift, and the `?src=` label
+     must survive the hop or the install is counted in the wrong row. The meta
+     refresh is the no-JavaScript floor; it cannot carry the query, hence the
+     script above it. -->
+<script>location.replace('https://sheeq.app/theme' + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=https://sheeq.app/theme" />
+</head>
+<body><a href="https://sheeq.app/theme">sheeq.app/theme</a></body>
+</html>

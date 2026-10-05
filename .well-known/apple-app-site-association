@@ -5,12 +5,14 @@
         "appIDs": ["MG8LVR6QHY.app.sheeq"],
         "components": [
           { "/": "/p/*", "comment": "shared polls only" },
-          { "/": "/p", "comment": "shared polls only" }
+          { "/": "/p", "comment": "shared polls only" },
+          { "/": "/theme", "comment": "this week's theme (exact)" },
+          { "/": "/theme/", "comment": "this week's theme (exact)" }
         ]
       },
       {
         "appID": "MG8LVR6QHY.app.sheeq",
-        "paths": ["/p/*", "/p"]
+        "paths": ["/p/*", "/p", "/theme", "/theme/"]
       }
     ]
   }
