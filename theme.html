@@ -168,11 +168,15 @@
       theme_kicker:'ثيمة الأسبوع',
       theme_next_kicker:'قادمة',
       closes_today:'تُغلق المشاركات اليوم',
-      closes_tomorrow:'تُغلق المشاركات غداً',
+      closes_today_at:'تُغلق المشاركات اليوم {time}',
+      closes_tomorrow_at:'تُغلق المشاركات غداً {time}',
       closes_on:'تُغلق المشاركات {when}',
       starts_today:'تبدأ اليوم',
-      starts_tomorrow:'تبدأ غداً',
-      starts_on:'تبدأ {when}'
+      starts_today_at:'تبدأ اليوم {time}',
+      starts_tomorrow_at:'تبدأ غداً {time}',
+      starts_on:'تبدأ {when}',
+      period_am:'صباحاً',
+      period_pm:'مساءً'
     },
     en: {
       dir:'ltr', lang:'en',
@@ -185,11 +189,15 @@
       theme_kicker:'This week’s theme',
       theme_next_kicker:'Coming',
       closes_today:'Entries close today',
-      closes_tomorrow:'Entries close tomorrow',
+      closes_today_at:'Entries close today, {time}',
+      closes_tomorrow_at:'Entries close tomorrow, {time}',
       closes_on:'Entries close {when}',
       starts_today:'Starts today',
-      starts_tomorrow:'Starts tomorrow',
-      starts_on:'Starts {when}'
+      starts_today_at:'Starts today, {time}',
+      starts_tomorrow_at:'Starts tomorrow, {time}',
+      starts_on:'Starts {when}',
+      period_am:'am',
+      period_pm:'pm'
     }
   };
 
@@ -285,11 +293,26 @@
   // The app's dayPhrase (src/utils/brief.ts), rule for rule, as on /p: calendar
   // days on this device; today / tomorrow; a weekday while it is unambiguous
   // (within six days), a date after that. A replacer function, never a string.
+  // Today and tomorrow carry the hour (2026-10-07, as in the app): in this
+  // device's clock and digits, minutes only when there are any. A moment already
+  // behind us (a stale read) keeps the plain "today".
+  function clock(at) {
+    var loc = isAr ? 'ar' : 'en-US';
+    var h = at.getHours(), m = at.getMinutes();
+    var hour = new Intl.NumberFormat(loc).format(h % 12 === 0 ? 12 : h % 12);
+    var time = m === 0 ? hour : hour + ':' + new Intl.NumberFormat(loc, { minimumIntegerDigits: 2 }).format(m);
+    return time + ' ' + (h < 12 ? C.period_am : C.period_pm);
+  }
   function dayPhrase(iso, verb) {
     var at = new Date(iso);
-    var days = Math.round((startOfDay(at) - startOfDay(new Date())) / 86400000);
-    if (!isFinite(days) || days <= 0) return C[verb + '_today'];
-    if (days === 1) return C[verb + '_tomorrow'];
+    var now = new Date();
+    var days = Math.round((startOfDay(at) - startOfDay(now)) / 86400000);
+    if (!isFinite(days)) return C[verb + '_today'];
+    if (days <= 0) {
+      if (at.getTime() <= now.getTime()) return C[verb + '_today'];
+      return C[verb + '_today_at'].replace('{time}', function () { return clock(at); });
+    }
+    if (days === 1) return C[verb + '_tomorrow_at'].replace('{time}', function () { return clock(at); });
     var when = at.toLocaleDateString(isAr ? 'ar' : 'en-US',
       days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' });
     return C[verb + '_on'].replace('{when}', function () { return when; });
