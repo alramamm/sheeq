@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sheeq — أي إطلالة؟ / Which look?</title>
-<meta name="description" content="Two looks. People choose. Get Sheeq on the App Store or Google Play." />
+<meta name="description" content="Two looks, waiting on your call. Get Sheeq on the App Store or Google Play." />
 
 <!-- The one link for bios, captions and chats (2026-09-22): each phone is sent
      to its own store. Served as /get from get.html — NOT /get/ — so the link
@@ -15,7 +15,7 @@
 <meta property="og:site_name"   content="Sheeq" />
 <meta property="og:url"         content="https://sheeq.app/get" />
 <meta property="og:title"       content="Sheeq — أي إطلالة؟ · Which look?" />
-<meta property="og:description" content="إطلالتين، والناس تختار · Two looks. People choose." />
+<meta property="og:description" content="إطلالتين تنتظر رأيك · Two looks, waiting on your call." />
 <meta property="og:image"       content="https://sheeq.app/icon.png" />
 <meta name="twitter:card"       content="summary" />
 <link rel="canonical"        href="https://sheeq.app/get" />
@@ -80,7 +80,7 @@
   <img class="icon" src="https://sheeq.app/icon.png" alt="" />
   <div class="mark">SHEEQ</div>
   <h1 id="title">Which look?</h1>
-  <p class="sub" id="sub">Two looks. People choose.</p>
+  <p class="sub" id="sub">Two looks, waiting on your call.</p>
 
   <!-- Phone: one button, for this phone's store. -->
   <a class="cta" id="cta" href="https://apps.apple.com/app/id6762699699" hidden></a>
@@ -125,12 +125,17 @@
   // The door register: terse and gender-free by construction — no imperative
   // to the reader, no first-person adjective (the standing Arabic constraint on
   // every outward-facing string). Button labels are verbal nouns for the same
-  // reason. Title + premise are the /p page's own words, verbatim.
+  // reason. The title is the /p page's own words, verbatim. The premise is the
+  // VOTER's line (2026-10-07), not /p's «والناس تختار»: this is where the bio
+  // link lands, and the bio speaks to the voter («عندك ذوق؟ إطلالتين تنتظر
+  // رأيك»). It is also the app's first-card frame line (`vote.first_frame`).
+  // /p and /theme keep «والناس تختار» on purpose — a question page is someone
+  // asking, and «الناس تختار» is exactly true there.
   var COPY = {
     ar: {
       dir:'rtl', lang:'ar',
       title:'أي إطلالة؟',
-      sub:'إطلالتين، والناس تختار',
+      sub:'إطلالتين تنتظر رأيك',
       ios:'التحميل من App Store',
       android:'التحميل من Google Play',
       hint:'لم يُفتح المتجر؟ القائمة {m} ثم «الفتح في المتصفح».',
@@ -139,7 +144,7 @@
     en: {
       dir:'ltr', lang:'en',
       title:'Which look?',
-      sub:'Two looks. People choose.',
+      sub:'Two looks, waiting on your call.',
       ios:'Download on the App Store',
       android:'Get it on Google Play',
       hint:'Store didn’t open? The {m} menu, then “Open in browser”.',
