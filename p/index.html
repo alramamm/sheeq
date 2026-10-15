@@ -78,6 +78,26 @@
   .pct{font-size:22px;font-weight:600;color:var(--text);letter-spacing:.01em;line-height:1}
   .pick{font-size:11px;letter-spacing:.06em;color:var(--warm);opacity:.9}
   .slot.chosen{border-color:rgba(201,193,178,.55)}
+  /* One look (20261028): one photo, then its two answers stacked — equal and
+     quiet, neither lit until it is the visitor's. Stacked, never side by side:
+     a left/right pair reads as no/yes. The photo is not a button here. */
+  .one{width:100%;display:flex;flex-direction:column;align-items:center;margin-bottom:26px}
+  .one .slot{width:72%;max-width:330px;margin-bottom:14px}
+  .answers{width:100%;display:flex;flex-direction:column;gap:10px}
+  .answer{
+    width:100%;font:inherit;font-size:15px;font-weight:500;color:var(--text);
+    background:transparent;border:1px solid var(--line);border-radius:999px;
+    padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:10px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button.answer{cursor:pointer;transition:transform .12s ease}
+  button.answer:active{transform:scale(.99)}
+  .one.busy button.answer{opacity:.6;pointer-events:none}
+  /* The standing, after answering: each answer with its share; the visitor's own
+     carries the bone hairline and «إجابتك». */
+  .answer.row{justify-content:space-between}
+  .answer.chosen{border-color:rgba(201,193,178,.55)}
+  .answer .pct{font-size:17px}
   .cta{
     display:block;width:100%;text-align:center;text-decoration:none;
     background:var(--bone);color:#12110F;font-size:15px;font-weight:600;
@@ -175,6 +195,14 @@
       title_for:'أي إطلالة {occasion}؟',
       sub:'إطلالتان، وسؤال واحد. الإجابة بلمسة.',
       one:'الإطلالة الأولى', two:'الإطلالة الثانية',
+      // One look (20261028) — the app's own words (style_vote.one_*): the
+      // asker's question in the first person, and the visitor's answer too, so
+      // neither line assumes who is reading.
+      one_title:'أعتمدها؟',
+      one_title_for:'أعتمدها {occasion}؟',
+      one_sub:'صورة وسؤال. الإجابة بلمسة.',
+      one_photo:'الصورة',
+      one_go:'أعتمدها', one_other:'أعتمد غيرها',
       answered_h:'وصلت إجابتك',
       first_answer:'إجابتك هي الأولى',
       enough_h:'هذا السؤال اكتفى بإجاباته.',
@@ -208,6 +236,11 @@
       title_for:'Which look {occasion}?',
       sub:'Two looks, one question. Tap the one you’d pick.',
       one:'First look', two:'Second look',
+      one_title:'Should I go with this look?',
+      one_title_for:'Should I go with this look {occasion}?',
+      one_sub:'One photo, one question. Tap your answer.',
+      one_photo:'The photo',
+      one_go:'I’d go with it', one_other:'I’d go with something else',
       answered_h:'Your answer is in',
       first_answer:'Yours is the first answer',
       enough_h:'This question has enough answers.',
@@ -450,12 +483,19 @@
   // siblings as patterns (RUNBOOK §45).
   function questionTitle(poll) {
     var phrase = poll.occasionPhrase;
-    return phrase ? C.title_for.replace('{occasion}', function () { return phrase; }) : C.title;
+    var one = isOne(poll);
+    var frame = phrase ? (one ? C.one_title_for : C.title_for) : (one ? C.one_title : C.title);
+    return phrase ? frame.replace('{occasion}', function () { return phrase; }) : frame;
   }
+
+  // One look (20261028): a question with no second photo. Answer 1 = «أعتمدها»,
+  // 2 = «أعتمد غيرها» — the same two counters a pair uses.
+  function isOne(poll) { return !poll.image2_url; }
 
   // The question: two tappable looks. No tally before answering — the app hides
   // the split until you vote, and a visible standing would steer the answer.
   function renderQuestion(poll, errText) {
+    if (isOne(poll)) { renderOneQuestion(poll, errText); return; }
     app.innerHTML =
       '<h1>' + esc(questionTitle(poll)) + '</h1>' +
       '<p class="sub">' + esc(C.sub) + '</p>' +
@@ -478,6 +518,31 @@
     });
   }
 
+  // One look: the photo (not a button — the answer is said, never tapped onto
+  // a face), then its two answers.
+  function renderOneQuestion(poll, errText) {
+    app.innerHTML =
+      '<h1>' + esc(questionTitle(poll)) + '</h1>' +
+      '<p class="sub">' + esc(C.one_sub) + '</p>' +
+      '<div class="one" id="one">' +
+        '<div class="slot"><img alt="' + esc(C.one_photo) + '" src="' + esc(poll.image1_url) + '" /></div>' +
+        '<div class="answers">' +
+          '<button type="button" class="answer" data-choice="1">' + esc(C.one_go) + '</button>' +
+          '<button type="button" class="answer" data-choice="2">' + esc(C.one_other) + '</button>' +
+        '</div>' +
+      '</div>' +
+      (errText ? '<p class="err">' + esc(errText) + '</p>' : '');
+
+    var box = document.getElementById('one');
+    Array.prototype.forEach.call(box.querySelectorAll('button.answer'), function (btn) {
+      btn.addEventListener('click', function () {
+        if (box.classList.contains('busy')) return;
+        box.classList.add('busy');
+        answer(poll, Number(btn.getAttribute('data-choice')));
+      });
+    });
+  }
+
   // The standing: combined app + web answers, the same sum the owner's result
   // screen shows (pollTally in the app), so the two never disagree.
   // When the visitor's answer is the ONLY one, 100% against 0% is true but
@@ -490,6 +555,27 @@
     var p1 = total > 0 ? Math.round(s1 / total * 100) : 0;
     var p2 = total > 0 ? Math.round(s2 / total * 100) : 0;
     var solo = total === 1 && choice !== 0;
+
+    // One look: the photo, then each answer with its share — the same rules.
+    if (isOne(poll)) {
+      var row = function (n, label, pct) {
+        var chosen = choice === n;
+        return '<div class="answer row' + (chosen ? ' chosen' : '') + '">' +
+          '<span>' + esc(label) + (chosen ? ' <span class="pick">· ' + esc(C.your_pick) + '</span>' : '') + '</span>' +
+          (solo ? '<span></span>' : '<span class="pct">' + pct + '%</span>') +
+          '</div>';
+      };
+      app.innerHTML =
+        '<h1>' + esc(headline) + '</h1>' +
+        '<p class="sub">' + esc(solo ? C.first_answer : plural(C.answers, total)) + '</p>' +
+        '<div class="one">' +
+          '<div class="slot"><img alt="' + esc(C.one_photo) + '" src="' + esc(poll.image1_url) + '" /></div>' +
+          '<div class="answers">' + row(1, C.one_go, p1) + row(2, C.one_other, p2) + '</div>' +
+        '</div>' +
+        '<p class="premise">' + esc(C.premise) + '</p>' +
+        themeSlot() + storeBlock();
+      return;
+    }
 
     function slot(n, pct) {
       var chosen = choice === n;
