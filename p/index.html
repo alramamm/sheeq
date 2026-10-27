@@ -183,7 +183,8 @@
   var IOS_LIVE     = true;    // LIVE 2026-08-25 — 1.0.0 (12) approved, listing public
 
   // ── Copy ──────────────────────────────────────────────────────────────────
-  // The noun is «إطلالة» / "look" everywhere (2026-09-06), and every English
+  // The noun is «إطلالة» / "look" (2026-09-06) unless the question asks about a
+  // gift or a photo (`subjects`, 20261104), and every English
   // string on a judgment surface names its subject. Gender-free by
   // construction: agreement is with the look or the answer, never the reader.
   // Plural forms follow CLDR categories; the browser has Intl.PluralRules, so
@@ -203,6 +204,15 @@
       one_sub:'صورة وسؤال. الإجابة بلمسة.',
       one_photo:'الصورة',
       one_go:'أعتمدها', one_other:'أعتمد غيرها',
+      // What the question asks about (20261104) — the app's own words
+      // (style_vote.*_gift / *_photo). One look's «أعتمدها؟» names no noun.
+      subjects: {
+        gift:  { title:'أي هدية؟', title_for:'أي هدية {occasion}؟', sub:'هديتان، وسؤال واحد. الإجابة بلمسة.',
+                 one:'الهدية الأولى', two:'الهدية الثانية' },
+        // A photo question says «لقطة» in Arabic (owner, 2026-10-27).
+        photo: { title:'أي لقطة؟', title_for:'أي لقطة {occasion}؟', sub:'لقطتان، وسؤال واحد. الإجابة بلمسة.',
+                 one:'اللقطة الأولى', two:'اللقطة الثانية', one_sub:'لقطة وسؤال. الإجابة بلمسة.', one_photo:'اللقطة' }
+      },
       answered_h:'وصلت إجابتك',
       first_answer:'إجابتك هي الأولى',
       enough_h:'هذا السؤال اكتفى بإجاباته.',
@@ -241,6 +251,14 @@
       one_sub:'One photo, one question. Tap your answer.',
       one_photo:'The photo',
       one_go:'I’d go with it', one_other:'I’d go with something else',
+      subjects: {
+        gift:  { title:'Which gift?', title_for:'Which gift {occasion}?', sub:'Two gifts, one question. Tap the one you’d pick.',
+                 one:'First gift', two:'Second gift',
+                 one_title:'Should I go with this gift?', one_title_for:'Should I go with this gift {occasion}?' },
+        photo: { title:'Which photo?', title_for:'Which photo {occasion}?', sub:'Two photos, one question. Tap the one you’d pick.',
+                 one:'First photo', two:'Second photo',
+                 one_title:'Should I go with this photo?', one_title_for:'Should I go with this photo {occasion}?' }
+      },
       answered_h:'Your answer is in',
       first_answer:'Yours is the first answer',
       enough_h:'This question has enough answers.',
@@ -275,6 +293,14 @@
   var C = isAr ? COPY.ar : COPY.en;
   document.documentElement.lang = C.lang;
   document.documentElement.dir  = C.dir;
+
+  // What the question asks about (20261104): a gift or a photo has its own
+  // words for the sentences that name it; anything else — a look, or a subject
+  // that could not be read — keeps the look's.
+  function w(poll, key) {
+    var s = poll && poll.subject && C.subjects[poll.subject];
+    return (s && s[key]) || C[key];
+  }
 
   var ua = navigator.userAgent || '';
   var isAndroid = /Android/i.test(ua);
@@ -473,7 +499,7 @@
   // be a broken request, not an optimisation. CSS constrains the size.
   function slotImg(poll, n) {
     var src = n === 1 ? poll.image1_url : poll.image2_url;
-    var alt = n === 1 ? C.one : C.two;
+    var alt = n === 1 ? w(poll, 'one') : w(poll, 'two');
     return '<img alt="' + esc(alt) + '" src="' + esc(src) + '" />';
   }
 
@@ -484,7 +510,8 @@
   function questionTitle(poll) {
     var phrase = poll.occasionPhrase;
     var one = isOne(poll);
-    var frame = phrase ? (one ? C.one_title_for : C.title_for) : (one ? C.one_title : C.title);
+    var frame = phrase ? (one ? w(poll, 'one_title_for') : w(poll, 'title_for'))
+                       : (one ? w(poll, 'one_title') : w(poll, 'title'));
     return phrase ? frame.replace('{occasion}', function () { return phrase; }) : frame;
   }
 
@@ -498,12 +525,12 @@
     if (isOne(poll)) { renderOneQuestion(poll, errText); return; }
     app.innerHTML =
       '<h1>' + esc(questionTitle(poll)) + '</h1>' +
-      '<p class="sub">' + esc(C.sub) + '</p>' +
+      '<p class="sub">' + esc(w(poll, 'sub')) + '</p>' +
       '<div class="pair" id="pair">' +
-        '<button type="button" class="slot" data-choice="1" aria-label="' + esc(C.one) + '">' + slotImg(poll, 1) +
-          '<span class="tag">' + esc(C.one) + '</span></button>' +
-        '<button type="button" class="slot" data-choice="2" aria-label="' + esc(C.two) + '">' + slotImg(poll, 2) +
-          '<span class="tag">' + esc(C.two) + '</span></button>' +
+        '<button type="button" class="slot" data-choice="1" aria-label="' + esc(w(poll, 'one')) + '">' + slotImg(poll, 1) +
+          '<span class="tag">' + esc(w(poll, 'one')) + '</span></button>' +
+        '<button type="button" class="slot" data-choice="2" aria-label="' + esc(w(poll, 'two')) + '">' + slotImg(poll, 2) +
+          '<span class="tag">' + esc(w(poll, 'two')) + '</span></button>' +
       '</div>' +
       (errText ? '<p class="err">' + esc(errText) + '</p>' : '');
 
@@ -523,9 +550,9 @@
   function renderOneQuestion(poll, errText) {
     app.innerHTML =
       '<h1>' + esc(questionTitle(poll)) + '</h1>' +
-      '<p class="sub">' + esc(C.one_sub) + '</p>' +
+      '<p class="sub">' + esc(w(poll, 'one_sub')) + '</p>' +
       '<div class="one" id="one">' +
-        '<div class="slot"><img alt="' + esc(C.one_photo) + '" src="' + esc(poll.image1_url) + '" /></div>' +
+        '<div class="slot"><img alt="' + esc(w(poll, 'one_photo')) + '" src="' + esc(poll.image1_url) + '" /></div>' +
         '<div class="answers">' +
           '<button type="button" class="answer" data-choice="1">' + esc(C.one_go) + '</button>' +
           '<button type="button" class="answer" data-choice="2">' + esc(C.one_other) + '</button>' +
@@ -569,7 +596,7 @@
         '<h1>' + esc(headline) + '</h1>' +
         '<p class="sub">' + esc(solo ? C.first_answer : plural(C.answers, total)) + '</p>' +
         '<div class="one">' +
-          '<div class="slot"><img alt="' + esc(C.one_photo) + '" src="' + esc(poll.image1_url) + '" /></div>' +
+          '<div class="slot"><img alt="' + esc(w(poll, 'one_photo')) + '" src="' + esc(poll.image1_url) + '" /></div>' +
           '<div class="answers">' + row(1, C.one_go, p1) + row(2, C.one_other, p2) + '</div>' +
         '</div>' +
         '<p class="premise">' + esc(C.premise) + '</p>' +
@@ -641,16 +668,28 @@
       .catch(function () { return null; });
   }
 
+  // What the question asks about (20261104) — its own request too, for the same
+  // reason: if it fails, the page keeps the look's words and the link works.
+  function loadSubject(pollId) {
+    return api.from('style_vote_polls')
+      .select('subject')
+      .eq('id', pollId)
+      .maybeSingle()
+      .then(function (row) { return row && typeof row.subject === 'string' ? row.subject : null; })
+      .catch(function () { return null; });
+  }
+
   // RLS returns an active poll to the anon key and nothing else, so "no row" is
   // the ordinary answer for an ended or deleted question, not an error.
   var occasionPhrase = loadOccasionPhrase(id);
+  var subject = loadSubject(id);
   api.from('style_vote_polls')
     .select('id,image1_url,image2_url,status,visibility,expires_at,vote1_count,vote2_count,web_vote1_count,web_vote2_count')
     .eq('id', id)
     .maybeSingle()
     .then(function (poll) {
-      return occasionPhrase.then(function (phrase) {
-        if (poll) poll.occasionPhrase = phrase;
+      return Promise.all([occasionPhrase, subject]).then(function (r) {
+        if (poll) { poll.occasionPhrase = r[0]; poll.subject = r[1]; }
         return poll;
       });
     })
