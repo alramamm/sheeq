@@ -205,13 +205,16 @@
       one_photo:'الصورة',
       one_go:'أعتمدها', one_other:'أعتمد غيرها',
       // What the question asks about (20261104) — the app's own words
-      // (style_vote.*_gift / *_photo). One look's «أعتمدها؟» names no noun.
+      // (style_vote.*_gift / *_photo). One photo names its noun too
+      // («أعتمد هذه الهدية؟», owner 2026-10-27); one look keeps «أعتمدها؟».
       subjects: {
         gift:  { title:'أي هدية؟', title_for:'أي هدية {occasion}؟', sub:'هديتان، وسؤال واحد. الإجابة بلمسة.',
-                 one:'الهدية الأولى', two:'الهدية الثانية' },
+                 one:'الهدية الأولى', two:'الهدية الثانية',
+                 one_title:'أعتمد هذه الهدية؟', one_title_for:'أعتمد هذه الهدية {occasion}؟' },
         // A photo question says «لقطة» in Arabic (owner, 2026-10-27).
         photo: { title:'أي لقطة؟', title_for:'أي لقطة {occasion}؟', sub:'لقطتان، وسؤال واحد. الإجابة بلمسة.',
-                 one:'اللقطة الأولى', two:'اللقطة الثانية', one_sub:'لقطة وسؤال. الإجابة بلمسة.', one_photo:'اللقطة' }
+                 one:'اللقطة الأولى', two:'اللقطة الثانية', one_sub:'لقطة وسؤال. الإجابة بلمسة.', one_photo:'اللقطة',
+                 one_title:'أعتمد هذه اللقطة؟', one_title_for:'أعتمد هذه اللقطة {occasion}؟' }
       },
       answered_h:'وصلت إجابتك',
       first_answer:'إجابتك هي الأولى',
