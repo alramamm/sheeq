@@ -244,7 +244,7 @@
   <img class="hero-icon" src="./icon.png" alt="Sheeq" />
   <div class="hero-name" id="hero-name">Sheeq</div>
   <div class="hero-page-title" id="hero-page-title">Privacy Policy</div>
-  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: October 9, 2026</div>
+  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 1, 2026</div>
 </div>
 
 <!-- ── LANG BAR ──────────────────────────────────────── -->
@@ -314,8 +314,8 @@
           <tr><td>Send push notifications (new followers, challenges, results)</td><td>Push token, notification preferences</td><td>Consent (opt-in)</td></tr>
           <tr><td>Process in-app purchases and subscriptions</td><td>Purchase data, transaction IDs</td><td>Contract performance</td></tr>
           <tr><td>Automatic content moderation (detect explicit imagery)</td><td>Uploaded photos sent to Sightengine AI service</td><td>Legitimate interest (platform safety)</td></tr>
-          <tr><td>AI-powered "Buzz" photo analysis (when a photo draws notable engagement, such as super likes, its image is analyzed to generate your personal Buzz note — reads the outfit only: clothing, colors, accessories, shoes, bags, and nails)</td><td>Photo sent to Anthropic AI service; generated analysis text stored in our database</td><td>Consent</td></tr>
-          <tr><td>Aura &amp; style insights (derived only — uses the visual attributes extracted during moderation, such as colors, garment type, and quality; the photo itself is not sent)</td><td>Derived visual attributes + engagement signals</td><td>Legitimate interest (enhanced user experience)</td></tr>
+          <tr><td>AI-powered photo reads: Buzz and Aura (when a photo draws notable engagement, such as super likes or being selected in a theme, it is analyzed to write its Buzz note and Aura, which appear on the photo's page — about what is visible in the photo, such as styling, colors, objects and setting; never body shape or facial features)</td><td>Photo sent to Anthropic AI service; generated text stored in our database and shown on the photo's page</td><td>Consent</td></tr>
+          <tr><td>Persona &amp; style insights (derived only — uses the visual attributes extracted during moderation, such as colors, garment type, and quality; the photo itself is not sent)</td><td>Derived visual attributes + engagement signals</td><td>Legitimate interest (enhanced user experience)</td></tr>
           <tr><td>Behavioral profiling (internal only — personalizes your in-app experience)</td><td>In-app interactions: votes, uploads, engagement patterns</td><td>Legitimate interest (personalization)</td></tr>
           <tr><td>Admin analytics (aggregate usage stats, city distribution)</td><td>IP-derived city, usage data</td><td>Legitimate interest (service improvement)</td></tr>
           <tr><td>Legal compliance, fraud prevention, and moderation</td><td>IP address, account data, violation history</td><td>Legal obligation / Legitimate interest</td></tr>
@@ -338,7 +338,7 @@
           <tr><td><strong>RevenueCat</strong> (revenuecat.com)</td><td>In-app purchase and subscription management</td><td>User ID, purchase and subscription records</td></tr>
           <tr><td><strong>ipapi.co</strong></td><td>IP geolocation (approximate city, at registration only)</td><td>Your IP address</td></tr>
           <tr><td><strong>Sightengine</strong> (sightengine.com) — AI-powered content moderation company</td><td>Automatic detection of explicit content in uploaded photos. For the looks you post, it also reads the photo's light, sharpness and colours — the visual attributes behind Aura &amp; style insights</td><td>Photo URL (public link, no personal identifiers)</td></tr>
-          <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — AI language model provider</td><td>AI-powered "Buzz" photo analysis when a look draws engagement (analyzes the outfit only: clothing, colors, accessories, shoes, bags, and nails — never body shape or facial features). Aura &amp; persona insights use only derived visual attributes, not the photo.</td><td>Photo (public link, only for the Buzz note) · Generated analysis text stored in our database</td></tr>
+          <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — AI language model provider</td><td>AI-powered photo reads (Buzz and Aura) when a photo draws engagement: it writes about what is visible, such as styling, colors, objects and setting — never body shape or facial features. Persona insights use only derived visual attributes, not the photo.</td><td>Photo (public link, only for Buzz and Aura) · Generated text stored in our database</td></tr>
           <tr><td><strong>Expo / Firebase Cloud Messaging</strong></td><td>Push notifications</td><td>Device push token</td></tr>
           <tr><td><strong>Google AdMob</strong> (admob.google.com)</td><td>Displaying in-app advertisements (interstitial and rewarded ads). Free users only — Couture members do not see ads.</td><td>Advertising ID (GAID on Android; IDFA on iOS, only with your consent via the App Tracking Transparency prompt). AdMob may also use approximate location for ad targeting.</td></tr>
           <tr><td><strong>Sentry</strong> (sentry.io)</td><td>Crash reporting and performance monitoring — helps us detect and fix app errors</td><td>Crash logs, device type, OS version, app version, and anonymized diagnostic data. IP addresses are not collected.</td></tr>
@@ -463,8 +463,8 @@
           <tr><td>إرسال إشعارات (متابعون جدد، تحديات، نتائج)</td><td>Push Token، تفضيلات الإشعارات</td><td>الموافقة (الاشتراك الاختياري)</td></tr>
           <tr><td>معالجة عمليات الشراء والاشتراكات</td><td>بيانات الشراء، معرّفات المعاملات</td><td>تنفيذ العقد</td></tr>
           <tr><td>مراقبة المحتوى تلقائياً (كشف الصور الصريحة)</td><td>الصور المرفوعة ترسل لخدمة Sightengine للذكاء الاصطناعي</td><td>المصلحة المشروعة (سلامة المنصة)</td></tr>
-          <tr><td>تحليل صورة «البَز» بالذكاء الاصطناعي (حين تلفت صورتك تفاعلاً ملحوظاً، مثل الإعجابات المميزة، تُحلَّل الصورة لإنشاء ملاحظة البَز الخاصة بك — تقرأ الإطلالة فقط: الملابس والألوان والإكسسوارات والأحذية والحقائب والمناكير)</td><td>الصورة تُرسل لخدمة Anthropic للذكاء الاصطناعي؛ نص التحليل المُولَّد يُخزَّن في قاعدة بياناتنا</td><td>الموافقة</td></tr>
-          <tr><td>رؤى الأورا والأسلوب (مشتقّة فقط — تعتمد على السمات البصرية المُستخرَجة أثناء مراقبة المحتوى، مثل الألوان ونوع الملبس والجودة؛ لا تُرسَل الصورة نفسها)</td><td>سمات بصرية مشتقّة + إشارات التفاعل</td><td>المصلحة المشروعة (تحسين تجربة المستخدم)</td></tr>
+          <tr><td>قراءات الصور بالذكاء الاصطناعي: «البَز» والأورا (حين تلفت صورتك تفاعلاً ملحوظاً، مثل الإعجابات المميزة أو اختيارها في ثيمة، تُحلَّل الصورة لكتابة ملاحظة البَز والأورا اللتين تظهران في صفحتها — عمّا يظهر في الصورة، مثل التنسيق والألوان والأشياء والمكان؛ لا تعليق على الجسم أو ملامح الوجه)</td><td>الصورة تُرسل لخدمة Anthropic للذكاء الاصطناعي؛ النص المُولَّد يُخزَّن في قاعدة بياناتنا ويظهر في صفحة الصورة</td><td>الموافقة</td></tr>
+          <tr><td>رؤى البرسونا والأسلوب (مشتقّة فقط — تعتمد على السمات البصرية المُستخرَجة أثناء مراقبة المحتوى، مثل الألوان ونوع الملبس والجودة؛ لا تُرسَل الصورة نفسها)</td><td>سمات بصرية مشتقّة + إشارات التفاعل</td><td>المصلحة المشروعة (تحسين تجربة المستخدم)</td></tr>
           <tr><td>التحليل السلوكي (داخلي فقط — لتخصيص تجربتك في التطبيق)</td><td>تفاعلات داخل التطبيق: أصوات، رفع صور، أنماط المشاركة</td><td>المصلحة المشروعة (التخصيص)</td></tr>
           <tr><td>تحليلات إدارية (إحصاءات مجمّعة، توزيع المدن)</td><td>المدينة المستنتجة من IP، بيانات الاستخدام</td><td>المصلحة المشروعة (تحسين الخدمة)</td></tr>
           <tr><td>الامتثال القانوني، منع الاحتيال، الإشراف</td><td>عنوان IP، بيانات الحساب، سجل المخالفات</td><td>الالتزام القانوني / المصلحة المشروعة</td></tr>
@@ -487,7 +487,7 @@
           <tr><td><strong>RevenueCat</strong> (revenuecat.com)</td><td>إدارة المشتريات داخل التطبيق والاشتراكات</td><td>معرّف المستخدم، سجلات الشراء والاشتراك</td></tr>
           <tr><td><strong>ipapi.co</strong></td><td>تحديد الموقع الجغرافي من IP (المدينة التقريبية، عند التسجيل فقط)</td><td>عنوان IP الخاص بك</td></tr>
           <tr><td><strong>Sightengine</strong> (sightengine.com) — شركة متخصصة في مراقبة المحتوى بالذكاء الاصطناعي</td><td>الكشف التلقائي عن المحتوى الصريح في الصور المرفوعة. ويقرأ في الإطلالات التي تنشرها إضاءة الصورة وحدّتها وألوانها — السمات البصرية التي تقوم عليها رؤى الأورا والأسلوب</td><td>رابط الصورة العام (دون معرّفات شخصية)</td></tr>
-          <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — مزود نماذج الذكاء الاصطناعي</td><td>تحليل صورة «البَز» بالذكاء الاصطناعي حين تلفت الإطلالة تفاعلاً (يحلل الإطلالة فقط: الملابس والألوان والإكسسوارات والأحذية والحقائب والمناكير — لا تعليق على الجسم أو ملامح الوجه). رؤى الأورا والبرسونا تعتمد على سمات بصرية مشتقّة فقط، لا على الصورة.</td><td>الصورة (رابط عام، فقط لملاحظة البَز) · نص التحليل المُولَّد يُخزَّن في قاعدة بياناتنا</td></tr>
+          <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — مزود نماذج الذكاء الاصطناعي</td><td>قراءات الصور بالذكاء الاصطناعي (البَز والأورا) حين تلفت الصورة تفاعلاً: يكتب عمّا يظهر فيها، مثل التنسيق والألوان والأشياء والمكان — لا تعليق على الجسم أو ملامح الوجه. رؤى البرسونا تعتمد على سمات بصرية مشتقّة فقط، لا على الصورة.</td><td>الصورة (رابط عام، فقط للبَز والأورا) · النص المُولَّد يُخزَّن في قاعدة بياناتنا</td></tr>
           <tr><td><strong>Expo / Firebase Cloud Messaging</strong></td><td>الإشعارات الفورية</td><td>Push Token الخاص بجهازك</td></tr>
           <tr><td><strong>Google AdMob</strong> (admob.google.com)</td><td>عرض الإعلانات داخل التطبيق (إعلانات بينية وإعلانات مكافأة). للمستخدمين المجانيين فقط — أعضاء Couture لا يرون إعلانات.</td><td>معرّف الإعلانات (GAID في أندرويد؛ IDFA في iOS بموافقتك فقط عبر نافذة إذن التتبع App Tracking Transparency). قد يستخدم AdMob أيضاً الموقع التقريبي لاستهداف الإعلانات.</td></tr>
           <tr><td><strong>Sentry</strong> (sentry.io)</td><td>رصد أعطال التطبيق ومراقبة الأداء — يساعدنا في اكتشاف الأخطاء وإصلاحها</td><td>سجلات الأعطال، نوع الجهاز، إصدار نظام التشغيل، إصدار التطبيق، وبيانات تشخيصية مجهولة الهوية. لا يُجمع عنوان IP.</td></tr>
@@ -576,11 +576,11 @@
     if (isAr) {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'سياسة الخصوصية';
-      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 9 أكتوبر 2026';
+      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 1 نوفمبر 2026';
     } else {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'Privacy Policy';
-      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: October 9, 2026';
+      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 1, 2026';
     }
   }
 </script>
