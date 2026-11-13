@@ -244,7 +244,7 @@
   <img class="hero-icon" src="./icon.png" alt="Sheeq" />
   <div class="hero-name" id="hero-name">Sheeq</div>
   <div class="hero-page-title" id="hero-page-title">Privacy Policy</div>
-  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 1, 2026</div>
+  <div class="hero-dates" id="hero-dates">Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 13, 2026</div>
 </div>
 
 <!-- ── LANG BAR ──────────────────────────────────────── -->
@@ -341,7 +341,7 @@
           <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — AI language model provider</td><td>AI-powered photo reads (Buzz and Aura) when a photo draws engagement: it writes about what is visible, such as styling, colors, objects and setting — never body shape or facial features. Persona insights use only derived visual attributes, not the photo.</td><td>Photo (public link, only for Buzz and Aura) · Generated text stored in our database</td></tr>
           <tr><td><strong>Expo / Firebase Cloud Messaging</strong></td><td>Push notifications</td><td>Device push token</td></tr>
           <tr><td><strong>Google AdMob</strong> (admob.google.com)</td><td>Displaying in-app advertisements (interstitial and rewarded ads). Free users only — Couture members do not see ads.</td><td>Advertising ID (GAID on Android; IDFA on iOS, only with your consent via the App Tracking Transparency prompt). AdMob may also use approximate location for ad targeting.</td></tr>
-          <tr><td><strong>Sentry</strong> (sentry.io)</td><td>Crash reporting and performance monitoring — helps us detect and fix app errors</td><td>Crash logs, device type, OS version, app version, and anonymized diagnostic data. IP addresses are not collected.</td></tr>
+          <tr><td><strong>Sentry</strong> (sentry.io)</td><td>Crash reporting and performance monitoring — helps us detect and fix app errors</td><td>Crash logs, device type, OS version, app version, approximate city, and diagnostic data linked to your account ID — used only to find and fix problems in the app. Your IP address is not stored.</td></tr>
         </tbody>
       </table>
     </div>
@@ -490,7 +490,7 @@
           <tr><td><strong>Anthropic, PBC</strong> (anthropic.com) — مزود نماذج الذكاء الاصطناعي</td><td>قراءات الصور بالذكاء الاصطناعي (البَز والأورا) حين تلفت الصورة تفاعلاً: يكتب عمّا يظهر فيها، مثل التنسيق والألوان والأشياء والمكان — لا تعليق على الجسم أو ملامح الوجه. رؤى البرسونا تعتمد على سمات بصرية مشتقّة فقط، لا على الصورة.</td><td>الصورة (رابط عام، فقط للبَز والأورا) · النص المُولَّد يُخزَّن في قاعدة بياناتنا</td></tr>
           <tr><td><strong>Expo / Firebase Cloud Messaging</strong></td><td>الإشعارات الفورية</td><td>Push Token الخاص بجهازك</td></tr>
           <tr><td><strong>Google AdMob</strong> (admob.google.com)</td><td>عرض الإعلانات داخل التطبيق (إعلانات بينية وإعلانات مكافأة). للمستخدمين المجانيين فقط — أعضاء Couture لا يرون إعلانات.</td><td>معرّف الإعلانات (GAID في أندرويد؛ IDFA في iOS بموافقتك فقط عبر نافذة إذن التتبع App Tracking Transparency). قد يستخدم AdMob أيضاً الموقع التقريبي لاستهداف الإعلانات.</td></tr>
-          <tr><td><strong>Sentry</strong> (sentry.io)</td><td>رصد أعطال التطبيق ومراقبة الأداء — يساعدنا في اكتشاف الأخطاء وإصلاحها</td><td>سجلات الأعطال، نوع الجهاز، إصدار نظام التشغيل، إصدار التطبيق، وبيانات تشخيصية مجهولة الهوية. لا يُجمع عنوان IP.</td></tr>
+          <tr><td><strong>Sentry</strong> (sentry.io)</td><td>رصد أعطال التطبيق ومراقبة الأداء — يساعدنا في اكتشاف الأخطاء وإصلاحها</td><td>سجلات الأعطال، نوع الجهاز، إصدار نظام التشغيل، إصدار التطبيق، المدينة التقريبية، وبيانات تشخيصية مرتبطة بمعرّف حسابك — تُستخدم فقط لاكتشاف مشكلات التطبيق وإصلاحها. لا يُخزَّن عنوان IP.</td></tr>
         </tbody>
       </table>
     </div>
@@ -576,11 +576,11 @@
     if (isAr) {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'سياسة الخصوصية';
-      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 1 نوفمبر 2026';
+      document.getElementById('hero-dates').textContent = 'تاريخ النفاذ: 25 أبريل 2026 · آخر تحديث: 13 نوفمبر 2026';
     } else {
       document.getElementById('hero-name').textContent = 'Sheeq';
       document.getElementById('hero-page-title').textContent = 'Privacy Policy';
-      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 1, 2026';
+      document.getElementById('hero-dates').innerHTML = 'Effective date: April 25, 2026 &nbsp;·&nbsp; Last updated: November 13, 2026';
     }
   }
 </script>
