@@ -184,7 +184,8 @@
 
   // ── Copy ──────────────────────────────────────────────────────────────────
   // The noun is «إطلالة» / "look" (2026-09-06) unless the question asks about a
-  // gift or a photo (`subjects`, 20261104), and every English
+  // gift or a photo (`subjects`, 20261104) or glasses or hair (20261113;
+  // makeup asks with a look's words), and every English
   // string on a judgment surface names its subject. Gender-free by
   // construction: agreement is with the look or the answer, never the reader.
   // Plural forms follow CLDR categories; the browser has Intl.PluralRules, so
@@ -214,7 +215,16 @@
         // A photo question says «لقطة» in Arabic (owner, 2026-10-27).
         photo: { title:'أي لقطة؟', title_for:'أي لقطة {occasion}؟', sub:'لقطتان، وسؤال واحد. الإجابة بلمسة.',
                  one:'اللقطة الأولى', two:'اللقطة الثانية', one_sub:'لقطة وسؤال. الإجابة بلمسة.', one_photo:'اللقطة',
-                 one_title:'أعتمد هذه اللقطة؟', one_title_for:'أعتمد هذه اللقطة {occasion}؟' }
+                 one_title:'أعتمد هذه اللقطة؟', one_title_for:'أعتمد هذه اللقطة {occasion}؟' },
+        // Glasses and hair (20261113 — "What are you deciding?", owner
+        // 2026-11-15): the noun keeps the answer on the frames or the hair.
+        // Makeup asks with a look's words, so it has no entry here.
+        glasses: { title:'أي نظارة؟', title_for:'أي نظارة {occasion}؟', sub:'نظارتان، وسؤال واحد. الإجابة بلمسة.',
+                   one:'النظارة الأولى', two:'النظارة الثانية', one_sub:'نظارة وسؤال. الإجابة بلمسة.', one_photo:'النظارة',
+                   one_title:'أعتمد هذه النظارة؟', one_title_for:'أعتمد هذه النظارة {occasion}؟' },
+        hair:    { title:'أي تسريحة؟', title_for:'أي تسريحة {occasion}؟', sub:'تسريحتان، وسؤال واحد. الإجابة بلمسة.',
+                   one:'التسريحة الأولى', two:'التسريحة الثانية', one_sub:'تسريحة وسؤال. الإجابة بلمسة.', one_photo:'التسريحة',
+                   one_title:'أعتمد هذه التسريحة؟', one_title_for:'أعتمد هذه التسريحة {occasion}؟' }
       },
       answered_h:'وصلت إجابتك',
       first_answer:'إجابتك هي الأولى',
@@ -260,7 +270,15 @@
                  one_title:'Should I go with this gift?', one_title_for:'Should I go with this gift {occasion}?' },
         photo: { title:'Which photo?', title_for:'Which photo {occasion}?', sub:'Two photos, one question. Tap the one you’d pick.',
                  one:'First photo', two:'Second photo',
-                 one_title:'Should I go with this photo?', one_title_for:'Should I go with this photo {occasion}?' }
+                 one_title:'Should I go with this photo?', one_title_for:'Should I go with this photo {occasion}?' },
+        // English glasses are plural: one pair's answer is "I’d go with them".
+        glasses: { title:'Which glasses?', title_for:'Which glasses {occasion}?', sub:'Two pairs, one question. Tap the one you’d pick.',
+                   one:'First pair', two:'Second pair', one_sub:'One pair, one question. Tap your answer.', one_photo:'The glasses',
+                   one_title:'Should I go with these glasses?', one_title_for:'Should I go with these glasses {occasion}?',
+                   one_go:'I’d go with them' },
+        hair:    { title:'Which hairstyle?', title_for:'Which hairstyle {occasion}?', sub:'Two hairstyles, one question. Tap the one you’d pick.',
+                   one:'First hairstyle', two:'Second hairstyle', one_photo:'The hairstyle',
+                   one_title:'Should I go with this hairstyle?', one_title_for:'Should I go with this hairstyle {occasion}?' }
       },
       answered_h:'Your answer is in',
       first_answer:'Yours is the first answer',
@@ -297,9 +315,9 @@
   document.documentElement.lang = C.lang;
   document.documentElement.dir  = C.dir;
 
-  // What the question asks about (20261104): a gift or a photo has its own
-  // words for the sentences that name it; anything else — a look, or a subject
-  // that could not be read — keeps the look's.
+  // What the question asks about (20261104): a gift, a photo, glasses or hair
+  // (20261113) has its own words for the sentences that name it; anything else
+  // — a look, makeup, or a subject that could not be read — keeps the look's.
   function w(poll, key) {
     var s = poll && poll.subject && C.subjects[poll.subject];
     return (s && s[key]) || C[key];
@@ -557,7 +575,7 @@
       '<div class="one" id="one">' +
         '<div class="slot"><img alt="' + esc(w(poll, 'one_photo')) + '" src="' + esc(poll.image1_url) + '" /></div>' +
         '<div class="answers">' +
-          '<button type="button" class="answer" data-choice="1">' + esc(C.one_go) + '</button>' +
+          '<button type="button" class="answer" data-choice="1">' + esc(w(poll, 'one_go')) + '</button>' +
           '<button type="button" class="answer" data-choice="2">' + esc(C.one_other) + '</button>' +
         '</div>' +
       '</div>' +
@@ -600,7 +618,7 @@
         '<p class="sub">' + esc(solo ? C.first_answer : plural(C.answers, total)) + '</p>' +
         '<div class="one">' +
           '<div class="slot"><img alt="' + esc(w(poll, 'one_photo')) + '" src="' + esc(poll.image1_url) + '" /></div>' +
-          '<div class="answers">' + row(1, C.one_go, p1) + row(2, C.one_other, p2) + '</div>' +
+          '<div class="answers">' + row(1, w(poll, 'one_go'), p1) + row(2, C.one_other, p2) + '</div>' +
         '</div>' +
         '<p class="premise">' + esc(C.premise) + '</p>' +
         themeSlot() + storeBlock();
