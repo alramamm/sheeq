@@ -294,13 +294,20 @@
   // days on this device; today / tomorrow; a weekday while it is unambiguous
   // (within six days), a date after that. A replacer function, never a string.
   // Today and tomorrow carry the hour (2026-10-07, as in the app): in this
-  // device's clock and digits, minutes only when there are any. A moment already
-  // behind us (a stale read) keeps the plain "today".
+  // device's clock, minutes only when there are any. A moment already behind us
+  // (a stale read) keeps the plain "today". Digits are 0-9 in both languages,
+  // the hour and the date alike (2026-11-24, the app's latinDigits): the words
+  // stay Arabic, the digits are the ones every count in the app uses.
+  function latin(s) {
+    return String(s).replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function (d) {
+      var c = d.charCodeAt(0); return String(c - (c >= 0x06F0 ? 0x06F0 : 0x0660));
+    });
+  }
   function clock(at) {
     var loc = isAr ? 'ar' : 'en-US';
     var h = at.getHours(), m = at.getMinutes();
-    var hour = new Intl.NumberFormat(loc).format(h % 12 === 0 ? 12 : h % 12);
-    var time = m === 0 ? hour : hour + ':' + new Intl.NumberFormat(loc, { minimumIntegerDigits: 2 }).format(m);
+    var hour = latin(new Intl.NumberFormat(loc).format(h % 12 === 0 ? 12 : h % 12));
+    var time = m === 0 ? hour : hour + ':' + latin(new Intl.NumberFormat(loc, { minimumIntegerDigits: 2 }).format(m));
     return time + ' ' + (h < 12 ? C.period_am : C.period_pm);
   }
   function dayPhrase(iso, verb) {
@@ -313,8 +320,8 @@
       return C[verb + '_today_at'].replace('{time}', function () { return clock(at); });
     }
     if (days === 1) return C[verb + '_tomorrow_at'].replace('{time}', function () { return clock(at); });
-    var when = at.toLocaleDateString(isAr ? 'ar' : 'en-US',
-      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' });
+    var when = latin(at.toLocaleDateString(isAr ? 'ar' : 'en-US',
+      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' }));
     return C[verb + '_on'].replace('{when}', function () { return when; });
   }
 

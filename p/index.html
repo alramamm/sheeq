@@ -421,13 +421,19 @@
   // The app's dayPhrase (src/utils/brief.ts), rule for rule: calendar days on
   // this device; today / tomorrow; a weekday while it is unambiguous (within
   // six days), a date after that. A replacer function, never a string ($&).
+  // Digits 0-9 in both languages (2026-11-24, the app's latinDigits).
+  function latin(s) {
+    return String(s).replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function (d) {
+      var c = d.charCodeAt(0); return String(c - (c >= 0x06F0 ? 0x06F0 : 0x0660));
+    });
+  }
   function dayPhrase(iso, verb) {
     var at = new Date(iso);
     var days = Math.round((startOfDay(at) - startOfDay(new Date())) / 86400000);
     if (!isFinite(days) || days <= 0) return C[verb + '_today'];
     if (days === 1) return C[verb + '_tomorrow'];
-    var when = at.toLocaleDateString(isAr ? 'ar' : 'en-US',
-      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' });
+    var when = latin(at.toLocaleDateString(isAr ? 'ar' : 'en-US',
+      days <= 6 ? { weekday: 'long' } : { day: 'numeric', month: 'long' }));
     return C[verb + '_on'].replace('{when}', function () { return when; });
   }
 
